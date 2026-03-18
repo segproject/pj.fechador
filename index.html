@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>📅 Fechador - PAPA JOHNS</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f9f9fa;
+    color: #333;
+    line-height: 1.6;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.container {
+    max-width: 800px;
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.form-group {
+    margin-bottom: 18px;
+}
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+}
+select, input, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+button:active {
+    transform: translateY(0);
+}
+.manual-input {
+    display: none;
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+}
+.optional-label {
+    color: #7f8c8d;
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 4px;
+}
+.btn-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+}
+.btn-limpiar {
+    background-color: #e74c3c;
+}
+.btn-limpiar:hover {
+    background-color: #c0392b;
+}
+.sticker-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: none;
+    transition: all 0.3s ease;
+}
+.sticker-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #007bff;
+    letter-spacing: 0.5px;
+}
+.sticker-producto {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: #e9f7fe;
+    border-radius: 8px;
+    border: 1px solid #cce5ff;
+}
+.sticker-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+.sticker-table th, .sticker-table td {
+    border: 1px solid #007bff;
+    padding: 10px;
+    text-align: center;
+}
+.sticker-table th {
+    background-color: #cce5ff;
+    font-weight: bold;
+    font-size: 15px;
+}
+.sticker-table .label {
+    font-weight: bold;
+    background-color: #e9f7fe;
+    width: 80px;
+}
+.sticker-table .time-col { width: 80px; }
+.resumen-fechas {
+    background: #eaf2f8;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #2c3e50;
+}
+.resumen-fechas p {
+    margin: 0;
+    padding: 0;
+}
+.resumen-fechas strong {
+    color: #007bff;
+}
+.ajuste-aviso {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 500;
+}
+@media (max-width: 600px) {
+    .container { padding: 15px; margin: 10px; }
+    h1 { font-size: 24px; }
+    .sticker-container { padding: 15px; margin: 15px auto; }
+    .sticker-title { font-size: 22px; }
+    .sticker-producto { font-size: 16px; padding: 10px; }
+    .sticker-table th, .sticker-table td { padding: 8px; font-size: 13px; }
+    .btn-group { flex-direction: column; }
+    .resumen-fechas { font-size: 14px; }
+}
+.sticker-container.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>📅 Fechador - PAPA JOHNS</h1>
+    <div class="form-group">
+        <label for="producto">📦 Seleccione el Producto:</label>
+        <select id="producto" onchange="updateShelfLife()">
+            <option value="">-- Seleccione un producto --</option>
+            <optgroup label="🍖 CÁRNICOS EN TROZOS Y RODAJAS">
+                <option value="Alitas de pollo - local">Alitas de pollo - local</option>
+                <option value="Poppers de pollo">Poppers de pollo</option>
+                <option value="Pollo asado - importado">Pollo asado - importado</option>
+                <option value="Salchicha italiana">Salchicha italiana</option>
+                <option value="Chorizo - local">Chorizo - local</option>
+                <option value="Chorizo Parrillero">Chorizo Parrillero</option>
+                <option value="Carne de res - local">Carne de res - local</option>
+                <option value="Salchicha de cerdo">Salchicha de cerdo</option>
+                <option value="Tocino">Tocino</option>
+                <option value="Pepperoni de cerdo">Pepperoni de cerdo</option>
+                <option value="Jamón - local">Jamón - local</option>
+            </optgroup>
+            <optgroup label="🧀 QUESOS">
+                <option value="Queso Mozzarella">Queso Mozzarella</option>
+                <option value="Queso en tiras">Queso en tiras</option>
+                <option value="Mezcla de 3 quesos (Asiago, Fontina, Provolone)">Mezcla de 3 quesos (Asiago, Fontina, Provolone)</option>
+                <option value="Mezcla de 2 quesos (Romano y Parmesano)">Mezcla de 2 quesos (Romano y Parmesano)</option>
+                <option value="Queso cheddar en tiras">Queso cheddar en tiras</option>
+                <option value="Queso cheddar rayado">Queso cheddar rayado</option>
+                <option value="Salsa de queso cheddar">Salsa de queso cheddar</option>
+            </optgroup>
+            <optgroup label="🥬 FRUTAS Y VEGETALES">
+                <option value="Champiñón">Champiñón</option>
+                <option value="Cebolla blanca/roja">Cebolla blanca/roja</option>
+                <option value="Pimiento rojo">Pimiento rojo</option>
+                <option value="Pimiento verde">Pimiento verde</option>
+                <option value="Tomate">Tomate</option>
+                <option value="Jalapeños">Jalapeños</option>
+                <option value="Aceituna negra">Aceituna negra</option>
+                <option value="Aceituna verde">Aceituna verde</option>
+                <option value="Piña - lata">Piña - lata</option>
+                <option value="Pepperoncini">Pepperoncini</option>
+            </optgroup>
+            <optgroup label="🧂 SALSAS">
+                <option value="Salsa pizza - lata">Salsa pizza - lata</option>
+                <option value="Salsa de mayonesa con ají limo">Salsa de mayonesa con ají limo</option>
+                <option value="Salsa rosada (1kg)">Salsa rosada (1kg)</option>
+                <option value="Salsa rosada (0.5 kg)">Salsa rosada (0.5 kg)</option>
+                <option value="Salsa Parrillera">Salsa Parrillera</option>
+                <option value="Salsa de ajo (botella - granel)">Salsa de ajo (botella - granel)</option>
+                <option value="Salsa de mango habanero (bolsa)">Salsa de mango habanero (bolsa)</option>
+                <option value="Salsa Ranch">Salsa Ranch</option>
+                <option value="Salsa Bechamel">Salsa Bechamel</option>
+                <option value="Salsa Chimichurri">Salsa Chimichurri</option>
+                <option value="Salsa de ajo (blister - cup)">Salsa de ajo (blister - cup)</option>
+                <option value="Salsa Parmesana (botella - granel)">Salsa Parmesana (botella - granel)</option>
+                <option value="Salsa BBQ (blister - cup)">Salsa BBQ (blister - cup)</option>
+                <option value="Salsa BBQ (bolsa)">Salsa BBQ (bolsa)</option>
+                <option value="Salsa Buffalo (blister - cup)">Salsa Buffalo (blister - cup)</option>
+                <option value="Salsa de Miel Picante">Salsa de Miel Picante</option>
+            </optgroup>
+            <optgroup label="🧂 OTROS INSUMOS">
+                <option value="Dustinator">Dustinator</option>
+                <option value="Masa Croisant">Masa Croisant</option>
+                <option value="Masa delgada - importada">Masa delgada - importada</option>
+                <option value="Azúcar glaseada (Icing) - local">Azúcar glaseada (Icing) - local</option>
+                <option value="Cinamon Spreed">Cinamon Spreed</option>
+                <option value="Orégano - sachet">Orégano - sachet</option>
+                <option value="Aji panca - sachet">Aji panca - sachet</option>
+                <option value="Orégano - granel">Orégano - granel</option>
+                <option value="Aji panca - granel">Aji panca - granel</option>
+                <option value="Sazonador italiano">Sazonador italiano</option>
+                <option value="Pasta de lasagna">Pasta de lasagna</option>
+                <option value="Tortilla">Tortilla</option>
+                <option value="Manjar Blanco">Manjar Blanco</option>
+                <option value="Azúcar Impalpable">Azúcar Impalpable</option>
+            </optgroup>
+            <optgroup label="🎉 PREPS">
+                <option value="Lasagna (All the meats/The Works/Americana)">Lasagna (All the meats/The Works/Americana)</option>
+                <option value="Rollitos de Pepperoni/Jamón">Rollitos de Pepperoni/Jamón</option>
+                <option value="Rollitos de Manjar">Rollitos de Manjar</option>
+                <option value="Rollitos de Canela">Rollitos de Canela</option>
+            </optgroup>
+        </select>
+    </div>
+    <div class="form-group" id="recibidoSection"></div>
+    <div class="form-group">
+        <label for="preparadoFecha">🍳 PREPARADO - Fecha de Inicio:</label>
+        <input type="date" id="preparadoFecha" />
+        <label for="preparadoHora">⏰ Hora de Inicio (HH:MM):</label>
+        <input type="time" id="preparadoHora" />
+        <div id="preparadoManualVencInput" class="manual-input">
+            <label for="preparadoVencFecha">📆 Fecha de Vencimiento (Según empaque):</label>
+            <input type="date" id="preparadoVencFecha" />
+            <label for="preparadoVencHora">🕒 Hora de Vencimiento (HH:MM):</label>
+            <input type="time" id="preparadoVencHora" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="lineaFecha">🏭 LÍNEA - Fecha de Inicio:</label>
+        <input type="date" id="lineaFecha" />
+        <label for="lineaHora">⏰ Hora de Inicio (HH:MM):</label>
+        <input type="time" id="lineaHora" />
+        <div id="lineaManualVencInput" class="manual-input">
+            <label for="lineaVencFecha">📆 Fecha de Vencimiento (Según empaque):</label>
+            <input type="date" id="lineaVencFecha" />
+            <label for="lineaVencHora">🕒 Hora de Vencimiento (HH:MM):</label>
+            <input type="time" id="lineaVencHora" />
+        </div>
+    </div>
+    <div class="btn-group">
+        <button onclick="calcularVencimientos()">✅ Generar Sticker</button>
+        <button class="btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar</button>
+    </div>
+</div>
+<div class="sticker-container" id="stickerContainer">
+    <div class="sticker-title">📦 PRODUCTO</div>
+    <div class="sticker-producto" id="stickerProducto"></div>
+    <table class="sticker-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>FECHA</th>
+                <th>HORA</th>
+                <th>FECHA VENC.</th>
+                <th>HORA VENC.</th>
+            </tr>
+            <tr><td colspan="5" style="height:5px;background-color:#007bff;"></td></tr>
+        </thead>
+        <tbody id="stickerBody"></tbody>
+    </table>
+    <div class="ajuste-aviso" id="ajusteAviso" style="display:none;"></div>
+    <div class="resumen-fechas" id="resumenFechas" style="display:none;">
+        <p><strong>📅 Fechas de vencimiento:</strong></p>
+        <p>- <strong>RECIBIDO:</strong> <span id="resumenRecibido">-</span></p>
+        <p>- <strong>PREPARADO:</strong> <span id="resumenPreparado">-</span></p>
+        <p>- <strong>EN LÍNEA:</strong> <span id="resumenLinea">-</span></p>
+    </div>
+</div>
+<script>
+const vidaUtil = {
+    "Alitas de pollo - local": { recibido: 7, preparado: 7, linea: 1 },
+    "Poppers de pollo": { recibido: 7, preparado: 7, linea: 1 },
+    "Pollo asado - importado": { recibido: 10, preparado: 7, linea: 1 },
+    "Salchicha italiana": { recibido: 12, preparado: 7, linea: 1 },
+    "Chorizo - local": { recibido: 7, preparado: 4, linea: 1 },
+    "Chorizo Parrillero": { recibido: "Según empaque", preparado: 6, linea: 1 },
+    "Carne de res - local": { recibido: 12, preparado: 7, linea: 2 },
+    "Salchicha de cerdo": { recibido: 12, preparado: 7, linea: 2 },
+    "Tocino": { recibido: 30, preparado: 7, linea: 2 },
+    "Pepperoni de cerdo": { recibido: 30, preparado: 7, linea: 2 },
+    "Jamón - local": { recibido: 14, preparado: 7, linea: 2 },
+    "Queso Mozzarella": { recibido: 14, preparado: 7, linea: 1 },
+    "Queso en tiras": { recibido: 14, preparado: 7, linea: 1 },
+    "Mezcla de 3 quesos (Asiago, Fontina, Provolone)": { recibido: 7, preparado: 7, linea: 1 },
+    "Mezcla de 2 quesos (Romano y Parmesano)": { recibido: 7, preparado: 7, linea: 1 },
+    "Queso cheddar en tiras": { recibido: 60, preparado: 7, linea: 1 },
+    "Queso cheddar rayado": { recibido: 60, preparado: 5, linea: 1 },
+    "Salsa de queso cheddar": { recibido: 90, preparado: 5, linea: 1 },
+    "Champiñón": { recibido: "Según empaque", preparado: 1, linea: "11:59 p. m." },
+    "Cebolla blanca/roja": { recibido: "Según empaque", preparado: 2, linea: "11:59 p. m." },
+    "Pimiento rojo": { recibido: "Según empaque", preparado: 2, linea: "11:59 p. m." },
+    "Pimiento verde": { recibido: "Según empaque", preparado: 2, linea: "11:59 p. m." },
+    "Tomate": { recibido: "Según empaque", preparado: 2, linea: "11:59 p. m." },
+    "Jalapeños": { recibido: "Según empaque", preparado: 60, linea: "11:59 p. m." },
+    "Aceituna negra": { recibido: "Según empaque", preparado: 7, linea: 2 },
+    "Aceituna verde": { recibido: "Según empaque", preparado: 7, linea: 2 },
+    "Piña - lata": { recibido: "Según empaque", preparado: 15, linea: 2 },
+    "Pepperoncini": { recibido: "Según empaque", preparado: 15, linea: "11:59 p. m." },
+    "Salsa pizza - lata": { recibido: "Según empaque", preparado: "10 horas", linea: "10 horas" },
+    "Salsa de mayonesa con ají limo": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa rosada (1kg)": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa rosada (0.5 kg)": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa Parrillera": { recibido: "Según empaque", preparado: 3, linea: "11:59 p. m." },
+    "Salsa de ajo (botella - granel)": { recibido: "Según empaque", preparado: 21, linea: "11:59 p. m." },
+    "Salsa de mango habanero (bolsa)": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa Ranch": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa Bechamel": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Salsa Chimichurri": { recibido: "Según empaque", preparado: 15, linea: 2 },
+    "Salsa de ajo (blister - cup)": { recibido: "Según empaque", preparado: "Según empaque", linea: "11:59 p. m." },
+    "Salsa Parmesana (botella - granel)": { recibido: "Según empaque", preparado: 21, linea: "11:59 p. m." },
+    "Salsa BBQ (blister - cup)": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Salsa BBQ (bolsa)": { recibido: "Según empaque", preparado: 4, linea: 2 },
+    "Salsa Buffalo (blister - cup)": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Salsa de Miel Picante": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Dustinator": { recibido: "Según empaque", preparado: 14, linea: 2 },
+    "Masa Croisant": { recibido: 5, preparado: null, linea: "11:59 p. m." },
+    "Masa delgada - importada": { recibido: 30, preparado: 3, linea: null },
+    "Azúcar glaseada (Icing) - local": { recibido: "Según empaque", preparado: 30, linea: 2 },
+    "Cinamon Spreed": { recibido: "Según empaque", preparado: 30, linea: 2 },
+    "Orégano - sachet": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Aji panca - sachet": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Orégano - granel": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Aji panca - granel": { recibido: "Según empaque", preparado: "Según empaque", linea: "Según empaque" },
+    "Sazonador italiano": { recibido: "Según empaque", preparado: 7, linea: 3 },
+    "Pasta de lasagna": { recibido: 10, preparado: 8, linea: null },
+    "Tortilla": { recibido: "Según empaque", preparado: 7, linea: "11:59 p. m." },
+    "Manjar Blanco": { recibido: "Según empaque", preparado: 15, linea: 5 },
+    "Azúcar Impalpable": { recibido: "Según empaque", preparado: 30, linea: 5 },
+    "Lasagna (All the meats/The Works/Americana)": { recibido: null, preparado: 4, linea: null },
+    "Rollitos de Pepperoni/Jamón": { recibido: null, preparado: "6 horas", linea: "6 horas" },
+    "Rollitos de Manjar": { recibido: null, preparado: "6 horas", linea: "6 horas" },
+    "Rollitos de Canela": { recibido: null, preparado: "6 horas", linea: "6 horas" }
+};
+const horariosCierre = {
+    1: "23:59", 2: "23:59", 3: "23:59",
+    4: "23:59", 5: "23:59", 6: "23:59", 0: "23:59"
+};
+function updateShelfLife() {
+    const producto = document.getElementById('producto').value;
+    const recibidoSection = document.getElementById('recibidoSection');
+    const p = document.getElementById('preparadoManualVencInput');
+    const l = document.getElementById('lineaManualVencInput');
+    if (!producto) {
+        recibidoSection.innerHTML = '';
+        p.style.display = 'none';
+        l.style.display = 'none';
+        return;
+    }
+    const s = vidaUtil[producto];
+    if (s.recibido === "Según empaque") {
+        recibidoSection.innerHTML = `
+            <label>📦 RECIBIDO - Fecha de Vencimiento (Según empaque):</label>
+            <input type="date" id="recibidoVencFecha" />
+            <p class="optional-label">* No se requiere fecha de inicio.</p>
+        `;
+    } else {
+        recibidoSection.innerHTML = `
+            <label for="recibidoFecha">📦 RECIBIDO - Fecha de Inicio:</label>
+            <input type="date" id="recibidoFecha" />
+        `;
+    }
+    p.style.display = (s.preparado === "Según empaque") ? 'block' : 'none';
+    l.style.display = (s.linea === "Según empaque") ? 'block' : 'none';
+}
+function formatearFecha(fechaStr) {
+    if (!fechaStr) return "-";
+    const [y, m, d] = fechaStr.split('-');
+    return `${d}/${m}/${y}`;
+}
+function formatearHora(horaStr) {
+    if (!horaStr) return "-";
+    const [h, min] = horaStr.split(':');
+    let hh = parseInt(h);
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    hh = hh % 12 || 12;
+    return `${String(hh).padStart(2, '0')}:${min} ${ampm}`;
+}
+function obtenerNombreDia(fechaISO) {
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const fecha = new Date(`${fechaISO}T00:00:00-05:00`);
+    return diasSemana[fecha.getDay()];
+}
+function obtenerNombreDiaCompleto(fechaISO, horaStr) {
+    if (!fechaISO || !horaStr) return "día desconocido";
+    const [h, min] = horaStr.split(':').map(Number);
+    const [y, m, d] = fechaISO.split('-').map(Number);
+    const fecha = new Date(Date.UTC(y, m - 1, d, h, min));
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    return diasSemana[fecha.getUTCDay()];
+}
+function sumarDiasISO(fechaISO, dias) {
+    const [y, m, d] = fechaISO.split('-').map(Number);
+    const fecha = new Date(Date.UTC(y, m - 1, d));
+    fecha.setUTCDate(fecha.getUTCDate() + dias);
+    return fecha.toISOString().split('T')[0];
+}
+function sumarDiasYHorasISO(fechaISO, horaStr, dias, horas) {
+    const [h, min] = horaStr.split(':').map(Number);
+    const [y, m, d] = fechaISO.split('-').map(Number);
+    const fecha = new Date(Date.UTC(y, m - 1, d, h, min));
+    fecha.setUTCDate(fecha.getUTCDate() + dias);
+    fecha.setUTCHours(fecha.getUTCHours() + horas);
+    const iso = fecha.toISOString();
+    const fechaISOOut = iso.split('T')[0];
+    const horaISOOut = iso.split('T')[1].substring(0, 5);
+    return {
+        fechaISO: fechaISOOut,
+        horaISO: horaISOOut,
+        fechaMostrar: formatearFecha(fechaISOOut),
+        horaMostrar: formatearHora(horaISOOut)
+    };
+}
+function obtenerUltimoMinutoDia(fechaISO) {
+    const horaCierre = obtenerHoraCierre(fechaISO);
+    return {
+        fechaISO: fechaISO,
+        horaISO: horaCierre,
+        fechaMostrar: formatearFecha(fechaISO),
+        horaMostrar: formatearHora(horaCierre)
+    };
+}
+function montarFilaSticker(etiqueta, fecha, hora, fechaVenc, horaVenc) {
+    return `<tr>
+        <td class="label">${etiqueta}</td>
+        <td>${fecha}</td>
+        <td class="time-col"><span>${hora}</span></td>
+        <td>${fechaVenc}</td>
+        <td class="time-col"><span>${horaVenc}</span></td>
+    </tr>`;
+}
+function obtenerHoraCierre(fechaYYYYMMDD) {
+    const fecha = new Date(`${fechaYYYYMMDD}T00:00:00-05:00`);
+    const diaSemana = fecha.getDay();
+    return horariosCierre[diaSemana];
+}
+function calcularVencimientos() {
+    const producto = document.getElementById('producto').value;
+    if (!producto) {
+        alert("⚠️ Por favor, seleccione un producto.");
+        return;
+    }
+    const shelfLife = vidaUtil[producto];
+    let resumen = [`<strong>${producto}</strong><br><br>`];
+    let filas = [];
+    let ajustes = [];
+    const rF = document.getElementById('recibidoFecha')?.value;
+    const pF = document.getElementById('preparadoFecha')?.value;
+    const pH = document.getElementById('preparadoHora')?.value;
+    const lF = document.getElementById('lineaFecha')?.value;
+    const lH = document.getElementById('lineaHora')?.value;
+    if (pF && rF) {
+        const prepDate = new Date(pF + "T00:00:00-05:00");
+        const recibidoDate = new Date(rF + "T00:00:00-05:00");
+        if (prepDate < recibidoDate) {
+            alert("⚠️ La fecha de inicio de PREPARADO no puede ser anterior a la fecha de inicio de RECIBIDO.");
+            return;
+        }
+    }
+    if (lF && pF) {
+        const lineaDate = new Date(lF + "T00:00:00-05:00");
+        const prepDate = new Date(pF + "T00:00:00-05:00");
+        if (lineaDate < prepDate) {
+            alert("⚠️ La fecha de inicio de LÍNEA no puede ser anterior a la fecha de inicio de PREPARADO.");
+            return;
+        }
+    }
+    // === RECIBIDO ===
+    let fechaVencRecibidoISO = null;
+    let fechaVencRecibidoMostrar = "-";
+    if (shelfLife.recibido === "Según empaque") {
+        const vF = document.getElementById('recibidoVencFecha')?.value;
+        if (vF) {
+            fechaVencRecibidoISO = vF;
+            fechaVencRecibidoMostrar = formatearFecha(vF);
+            resumen.push(`<strong>RECIBIDO:</strong> Según empaque → ${fechaVencRecibidoMostrar}`);
+        } else {
+            resumen.push(`<strong>RECIBIDO:</strong> Según empaque → No ingresado`);
+            fechaVencRecibidoMostrar = "No ingresado";
+        }
+        filas.push(montarFilaSticker("RECIB.", "-", "-", fechaVencRecibidoMostrar, "-"));
+    } else if (shelfLife.recibido !== null) {
+        if (rF) {
+            // ✅ CAMBIO: Restar 1 día para que el día de ingreso cuente como Día 1
+            fechaVencRecibidoISO = sumarDiasISO(rF, shelfLife.recibido - 1);
+            fechaVencRecibidoMostrar = formatearFecha(fechaVencRecibidoISO);
+            resumen.push(`<strong>RECIBIDO:</strong> ${shelfLife.recibido} día(s) → ${fechaVencRecibidoMostrar}`);
+            filas.push(montarFilaSticker("RECIB.", formatearFecha(rF), "-", fechaVencRecibidoMostrar, "-"));
+        } else {
+            resumen.push(`<strong>RECIBIDO:</strong> No ingresado`);
+            filas.push(montarFilaSticker("RECIB.", "-", "-", "-", "-"));
+        }
+    } else {
+        resumen.push(`<strong>RECIBIDO:</strong> No aplica`);
+        filas.push(montarFilaSticker("RECIB.", "-", "-", "-", "-"));
+    }
+    // === PREPARADO ===
+    let vencPreparadoOriginal = null;
+    let fechaInicioPreparado = null;
+    let fechaVencPreparadoMostrar = "-", horaVencPreparadoMostrar = "-";
+    if (pF && pH) {
+        fechaInicioPreparado = pF;
+        if (shelfLife.preparado === "Según empaque") {
+            const vF = document.getElementById('preparadoVencFecha')?.value;
+            const vH = document.getElementById('preparadoVencHora')?.value;
+            if (vF && vH) {
+                vencPreparadoOriginal = { fecha: vF, hora: vH };
+                fechaVencPreparadoMostrar = formatearFecha(vF);
+                horaVencPreparadoMostrar = formatearHora(vH);
+                resumen.push(`<strong>PREPARADO:</strong> Según empaque → ${fechaVencPreparadoMostrar} ${horaVencPreparadoMostrar}`);
+            } else {
+                fechaVencPreparadoMostrar = horaVencPreparadoMostrar = "No ingresado";
+                resumen.push(`<strong>PREPARADO:</strong> Según empaque → No ingresado`);
+            }
+        } else if (typeof shelfLife.preparado === 'number') {
+            const resultadoNatural = sumarDiasYHorasISO(pF, pH, shelfLife.preparado, 0);
+            if (fechaVencRecibidoISO && resultadoNatural.fechaISO > fechaVencRecibidoISO) {
+                const resultado = obtenerUltimoMinutoDia(fechaVencRecibidoISO);
+                vencPreparadoOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+                fechaVencPreparadoMostrar = resultado.fechaMostrar;
+                horaVencPreparadoMostrar = resultado.horaMostrar;
+                resumen.push(`<strong>PREPARADO:</strong> Forzado a cierre de RECIBIDO → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+            } else {
+                vencPreparadoOriginal = { fecha: resultadoNatural.fechaISO, hora: resultadoNatural.horaISO };
+                fechaVencPreparadoMostrar = resultadoNatural.fechaMostrar;
+                horaVencPreparadoMostrar = resultadoNatural.horaMostrar;
+                resumen.push(`<strong>PREPARADO:</strong> ${shelfLife.preparado} día(s) → ${resultadoNatural.fechaMostrar} ${resultadoNatural.horaMostrar}`);
+            }
+        } else if (shelfLife.preparado === "11:59 p. m.") {
+            const resultado = obtenerUltimoMinutoDia(pF);
+            vencPreparadoOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+            fechaVencPreparadoMostrar = resultado.fechaMostrar;
+            horaVencPreparadoMostrar = resultado.horaMostrar;
+            resumen.push(`<strong>PREPARADO:</strong> Hasta cierre → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+        } else if (shelfLife.preparado && shelfLife.preparado.includes("horas")) {
+            const h = parseInt(shelfLife.preparado);
+            const resultado = sumarDiasYHorasISO(pF, pH, 0, h);
+            vencPreparadoOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+            fechaVencPreparadoMostrar = resultado.fechaMostrar;
+            horaVencPreparadoMostrar = resultado.horaMostrar;
+            resumen.push(`<strong>PREPARADO:</strong> ${h} hora(s) → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+        } else {
+            fechaVencPreparadoMostrar = horaVencPreparadoMostrar = "No aplica";
+            resumen.push(`<strong>PREPARADO:</strong> No aplica`);
+        }
+        filas.push(montarFilaSticker("PREP", formatearFecha(pF), formatearHora(pH), fechaVencPreparadoMostrar, horaVencPreparadoMostrar));
+    } else {
+        resumen.push(`<strong>PREPARADO:</strong> No ingresado`);
+        filas.push(montarFilaSticker("PREP", "-", "-", "-", "-"));
+    }
+    // === LÍNEA ===
+    let vencLineaOriginal = null;
+    let fechaInicioLinea = null;
+    let fechaVencLineaMostrar = "-", horaVencLineaMostrar = "-";
+    let vencLineaFinal = null;
+    let fechaVencLineaFinalMostrar = "-";
+    let horaVencLineaFinalMostrar = "-";
+    if (lF && lH) {
+        fechaInicioLinea = lF;
+        if (shelfLife.linea === "Según empaque") {
+            const vF = document.getElementById('lineaVencFecha')?.value;
+            const vH = document.getElementById('lineaVencHora')?.value;
+            if (vF && vH) {
+                vencLineaOriginal = { fecha: vF, hora: vH };
+                fechaVencLineaMostrar = formatearFecha(vF);
+                horaVencLineaMostrar = formatearHora(vH);
+                resumen.push(`<strong>LÍNEA:</strong> Según empaque → ${fechaVencLineaMostrar} ${horaVencLineaMostrar}`);
+            } else {
+                fechaVencLineaMostrar = horaVencLineaMostrar = "No ingresado";
+                resumen.push(`<strong>LÍNEA:</strong> Según empaque → No ingresado`);
+            }
+        } else if (typeof shelfLife.linea === 'number') {
+            const resultado = sumarDiasYHorasISO(lF, lH, shelfLife.linea, 0);
+            vencLineaOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+            fechaVencLineaMostrar = resultado.fechaMostrar;
+            horaVencLineaMostrar = resultado.horaMostrar;
+            resumen.push(`<strong>LÍNEA:</strong> ${shelfLife.linea} día(s) → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+        } else if (shelfLife.linea === "11:59 p. m.") {
+            const resultado = obtenerUltimoMinutoDia(lF);
+            vencLineaOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+            fechaVencLineaMostrar = resultado.fechaMostrar;
+            horaVencLineaMostrar = resultado.horaMostrar;
+            resumen.push(`<strong>LÍNEA:</strong> Hasta cierre → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+        } else if (shelfLife.linea && shelfLife.linea.includes("horas")) {
+            const h = parseInt(shelfLife.linea);
+            const resultado = sumarDiasYHorasISO(lF, lH, 0, h);
+            vencLineaOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
+            fechaVencLineaMostrar = resultado.fechaMostrar;
+            horaVencLineaMostrar = resultado.horaMostrar;
+            resumen.push(`<strong>LÍNEA:</strong> ${h} hora(s) → ${resultado.fechaMostrar} ${resultado.horaMostrar}`);
+        } else {
+            fechaVencLineaMostrar = horaVencLineaMostrar = "No aplica";
+            resumen.push(`<strong>LÍNEA:</strong> No aplica`);
+        }
+        filas.push(montarFilaSticker("LINEA", formatearFecha(lF), formatearHora(lH), fechaVencLineaMostrar, horaVencLineaMostrar));
+    } else {
+        resumen.push(`<strong>LÍNEA:</strong> No ingresado`);
+        filas.push(montarFilaSticker("LINEA", "-", "-", "-", "-"));
+    }
+    // === AJUSTES AUTOMÁTICOS ===
+    if (vencPreparadoOriginal && vencLineaOriginal) {
+        const prepDateTime = new Date(`${vencPreparadoOriginal.fecha}T${vencPreparadoOriginal.hora}:00-05:00`);
+        const lineaDateTime = new Date(`${vencLineaOriginal.fecha}T${vencLineaOriginal.hora}:00-05:00`);
+        if (lineaDateTime > prepDateTime) {
+            const nuevaFechaMostrar = formatearFecha(vencPreparadoOriginal.fecha);
+            const nuevaHoraMostrar = formatearHora(vencPreparadoOriginal.hora);
+            vencLineaFinal = {
+                fecha: vencPreparadoOriginal.fecha,
+                hora: vencPreparadoOriginal.hora
+            };
+            fechaVencLineaFinalMostrar = nuevaFechaMostrar;
+            horaVencLineaFinalMostrar = nuevaHoraMostrar;
+            filas[2] = montarFilaSticker("LINEA", formatearFecha(lF), formatearHora(lH), nuevaFechaMostrar, nuevaHoraMostrar);
+            ajustes.push(`LÍNEA ajustado a ${nuevaFechaMostrar} ${nuevaHoraMostrar} (fecha/hora de PREPARADO)`);
+        } else {
+            vencLineaFinal = vencLineaOriginal;
+            fechaVencLineaFinalMostrar = fechaVencLineaMostrar;
+            horaVencLineaFinalMostrar = horaVencLineaMostrar;
+        }
+    } else {
+        vencLineaFinal = vencLineaOriginal;
+        fechaVencLineaFinalMostrar = fechaVencLineaMostrar;
+        horaVencLineaFinalMostrar = horaVencLineaMostrar;
+    }
+    document.getElementById('stickerProducto').textContent = producto;
+    document.getElementById('stickerBody').innerHTML = filas.join('');
+    const aviso = document.getElementById('ajusteAviso');
+    if (ajustes.length > 0) {
+        aviso.textContent = "⚠️ Ajustes automáticos aplicados: " + ajustes.join("; ");
+        aviso.style.display = 'block';
+    } else {
+        aviso.style.display = 'none';
+    }
+    const resumenFechas = document.getElementById('resumenFechas');
+    const resumenRecibido = document.getElementById('resumenRecibido');
+    const resumenPreparado = document.getElementById('resumenPreparado');
+    const resumenLinea = document.getElementById('resumenLinea');
+    let recibidoTexto = "-";
+    let preparadoTexto = "-";
+    let lineaTexto = "-";
+    if (fechaVencRecibidoISO) {
+        const dia = obtenerNombreDia(fechaVencRecibidoISO);
+        const fecha = formatearFecha(fechaVencRecibidoISO);
+        recibidoTexto = `${dia} ${fecha}`;
+    }
+    if (vencPreparadoOriginal) {
+        const dia = obtenerNombreDiaCompleto(vencPreparadoOriginal.fecha, vencPreparadoOriginal.hora);
+        const fecha = formatearFecha(vencPreparadoOriginal.fecha);
+        const hora = formatearHora(vencPreparadoOriginal.hora);
+        preparadoTexto = `${dia} ${fecha} a las ${hora}`;
+    }
+    if (vencLineaFinal) {
+        const dia = obtenerNombreDiaCompleto(vencLineaFinal.fecha, vencLineaFinal.hora);
+        const fecha = formatearFecha(vencLineaFinal.fecha);
+        const hora = formatearHora(vencLineaFinal.hora);
+        lineaTexto = `${dia} ${fecha} a las ${hora}`;
+    }
+    resumenRecibido.textContent = recibidoTexto;
+    resumenPreparado.textContent = preparadoTexto;
+    resumenLinea.textContent = lineaTexto;
+    resumenFechas.style.display = 'block';
+    const stickerContainer = document.getElementById('stickerContainer');
+    stickerContainer.style.display = 'block';
+    stickerContainer.classList.add('fade-in');
+    stickerContainer.scrollIntoView({ behavior: 'smooth' });
+}
+function limpiarFormulario() {
+    document.getElementById('producto').value = "";
+    document.getElementById('recibidoSection').innerHTML = '';
+    document.getElementById('preparadoFecha').value = "";
+    document.getElementById('preparadoHora').value = "";
+    document.getElementById('preparadoVencFecha').value = "";
+    document.getElementById('preparadoVencHora').value = "";
+    document.getElementById('lineaFecha').value = "";
+    document.getElementById('lineaHora').value = "";
+    document.getElementById('lineaVencFecha').value = "";
+    document.getElementById('lineaVencHora').value = "";
+    document.getElementById('stickerContainer').style.display = 'none';
+    document.getElementById('resumenFechas').style.display = 'none';
+    document.getElementById('preparadoManualVencInput').style.display = 'none';
+    document.getElementById('lineaManualVencInput').style.display = 'none';
+    document.getElementById('ajusteAviso').style.display = 'none';
+    document.getElementById('producto').focus();
+}
+</script>
+</body>
+</html>
