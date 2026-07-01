@@ -4,6 +4,53 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>📅 Fechador - PAPA JOHNS</title>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLX2QPBXTBAppEphnWY1i8CF1dF1G1-4c",
+    authDomain: "fechador-90ad5.firebaseapp.com",
+    databaseURL: "https://fechador-90ad5-default-rtdb.firebaseio.com",
+    projectId: "fechador-90ad5",
+    storageBucket: "fechador-90ad5.firebasestorage.app",
+    messagingSenderId: "760044841379",
+    appId: "1:760044841379:web:22706a5f84069c231a5216"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Exponer funciones Firebase al scope global
+  window._fbSet = (path, data) => set(ref(db, path), data);
+  window._fbRemove = (path) => remove(ref(db, path));
+  window._fbOnValue = (path, callback) => onValue(ref(db, path), callback);
+
+  // Escuchar cambios en tiempo real de insumos personalizados
+  window._fbOnValue('insumosPersonalizados', (snapshot) => {
+    const data = snapshot.val() || {};
+    // Limpiar insumos custom previos del objeto vidaUtil
+    const guardadosLocal = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+    for (const k of Object.keys(guardadosLocal)) delete vidaUtil[k];
+    // Aplicar los de Firebase
+    Object.assign(vidaUtil, data);
+    // Guardar también en localStorage como caché offline
+    localStorage.setItem('insumosPersonalizados', JSON.stringify(data));
+    // Reconstruir categorías desde Firebase
+    window._fbOnValue('insumosCategorias', (snapCat) => {
+      const cats = snapCat.val() || {};
+      localStorage.setItem('insumosCategorias', JSON.stringify(cats));
+      renderizarInsumosEnSelect();
+      renderizarListaAdmin();
+      actualizarIndicadorSync(true);
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    actualizarIndicadorSync(null); // "conectando..."
+  });
+</script>
 <style>
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -205,9 +252,237 @@ button:active {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ===== PANEL ADMINISTRACIÓN ===== */
+.admin-toggle-btn {
+    background: linear-gradient(135deg, #8e44ad, #6c3483);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 11px 20px;
+    border-radius: 8px;
+    margin: 0 auto 18px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 800px;
+    transition: background 0.2s, transform 0.1s;
+}
+.admin-toggle-btn:hover { background: linear-gradient(135deg, #7d3c98, #5b2c6f); transform: translateY(-1px); }
+
+.admin-panel {
+    display: none;
+    max-width: 800px;
+    width: 100%;
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(142,68,173,0.15);
+    margin-bottom: 20px;
+    border: 2px solid #d2b4de;
+}
+.admin-panel h2 {
+    color: #6c3483;
+    font-size: 20px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 600px) { .admin-grid { grid-template-columns: 1fr; } }
+
+.admin-grid .full-width { grid-column: 1 / -1; }
+
+.vida-util-group {
+    background: #f8f0ff;
+    border: 1px solid #d2b4de;
+    border-radius: 10px;
+    padding: 14px;
+    grid-column: 1 / -1;
+}
+.vida-util-group h3 {
+    color: #6c3483;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.vida-util-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+@media (max-width: 600px) { .vida-util-row { grid-template-columns: 1fr; } }
+
+.vida-util-row label { font-size: 13px; margin-bottom: 4px; }
+.vida-util-row select, .vida-util-row input { font-size: 14px; padding: 8px; margin-bottom: 0; }
+
+.btn-agregar-insumo {
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    margin-top: 14px;
+}
+.btn-agregar-insumo:hover { background: linear-gradient(135deg, #1e8449, #196f3d); }
+
+.insumos-lista {
+    margin-top: 20px;
+    border-top: 2px dashed #d2b4de;
+    padding-top: 16px;
+}
+.insumos-lista h3 { color: #6c3483; font-size: 15px; margin-bottom: 12px; }
+
+.insumo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fdf9ff;
+    border: 1px solid #e8d5f5;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    gap: 10px;
+}
+.insumo-item .insumo-nombre { font-weight: 600; color: #2c3e50; flex: 1; }
+.insumo-item .insumo-vida { color: #6c3483; font-size: 12px; }
+.btn-eliminar-insumo {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    width: auto;
+    margin: 0;
+    transition: background 0.2s;
+}
+.btn-eliminar-insumo:hover { background: #c0392b; }
+
+.msg-exito {
+    background: #d5f5e3;
+    border: 1px solid #a9dfbf;
+    color: #1e8449;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+}
+.msg-error {
+    background: #fde8e8;
+    border: 1px solid #f5b7b1;
+    color: #922b21;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+}
 </style>
 </head>
 <body>
+<!-- Botón para abrir panel admin -->
+<button class="admin-toggle-btn" onclick="toggleAdminPanel()">⚙️ Administrar Insumos</button>
+
+<!-- PANEL DE ADMINISTRACIÓN -->
+<div class="admin-panel" id="adminPanel">
+    <h2>⚙️ Agregar Nuevo Insumo <span id="syncIndicador" style="font-size:13px;font-weight:400;margin-left:10px;padding:3px 10px;border-radius:20px;background:#f0f0f0;color:#888;">⏳ Conectando...</span></h2>
+
+    <div class="admin-grid">
+        <div class="full-width">
+            <label>📦 Nombre del Insumo:</label>
+            <input type="text" id="adminNombre" placeholder="Ej: Salsa teriyaki" />
+        </div>
+        <div>
+            <label>🗂️ Categoría:</label>
+            <select id="adminCategoria">
+                <option value="🍖 CÁRNICOS EN TROZOS Y RODAJAS">🍖 CÁRNICOS EN TROZOS Y RODAJAS</option>
+                <option value="🧀 QUESOS">🧀 QUESOS</option>
+                <option value="🥬 FRUTAS Y VEGETALES">🥬 FRUTAS Y VEGETALES</option>
+                <option value="🧂 SALSAS">🧂 SALSAS</option>
+                <option value="🧂 OTROS INSUMOS">🧂 OTROS INSUMOS</option>
+                <option value="🎉 PREPS">🎉 PREPS</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="vida-util-group" style="margin-top:14px;">
+        <h3>⏱️ Vida Útil por Etapa</h3>
+
+        <div class="vida-util-row">
+            <div>
+                <label>📦 RECIBIDO — Tipo:</label>
+                <select id="adminRecibidoTipo" onchange="toggleRecibidoInput()">
+                    <option value="segun_empaque">Según empaque</option>
+                    <option value="dias">Días fijos</option>
+                    <option value="no_aplica">No aplica</option>
+                </select>
+            </div>
+            <div id="adminRecibidoDiasBox">
+                <label>Cantidad de días:</label>
+                <input type="number" id="adminRecibidoDias" min="1" placeholder="Ej: 7" />
+            </div>
+        </div>
+
+        <div class="vida-util-row">
+            <div>
+                <label>🍳 PREPARADO — Tipo:</label>
+                <select id="adminPreparadoTipo" onchange="togglePreparadoInput()">
+                    <option value="dias">Días fijos</option>
+                    <option value="horas">Horas fijas</option>
+                    <option value="segun_empaque">Según empaque</option>
+                    <option value="cierre">Hasta cierre (11:59 pm)</option>
+                    <option value="no_aplica">No aplica</option>
+                </select>
+            </div>
+            <div id="adminPreparadoValorBox">
+                <label id="adminPreparadoValorLabel">Cantidad de días:</label>
+                <input type="number" id="adminPreparadoValor" min="1" placeholder="Ej: 3" />
+            </div>
+        </div>
+
+        <div class="vida-util-row">
+            <div>
+                <label>🏭 LÍNEA — Tipo:</label>
+                <select id="adminLineaTipo" onchange="toggleLineaInput()">
+                    <option value="dias">Días fijos</option>
+                    <option value="horas">Horas fijas</option>
+                    <option value="segun_empaque">Según empaque</option>
+                    <option value="cierre">Hasta cierre (11:59 pm)</option>
+                    <option value="no_aplica">No aplica</option>
+                </select>
+            </div>
+            <div id="adminLineaValorBox">
+                <label id="adminLineaValorLabel">Cantidad de días:</label>
+                <input type="number" id="adminLineaValor" min="1" placeholder="Ej: 1" />
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-agregar-insumo" onclick="agregarInsumo()">✅ Agregar Insumo</button>
+    <div class="msg-exito" id="msgExito">✅ Insumo agregado exitosamente.</div>
+    <div class="msg-error" id="msgError">⚠️ Por favor completa todos los campos requeridos.</div>
+
+    <!-- Lista de insumos personalizados -->
+    <div class="insumos-lista" id="insumosListaContainer" style="display:none;">
+        <h3>📋 Insumos Personalizados Guardados</h3>
+        <div id="insumosLista"></div>
+    </div>
+</div>
+
 <div class="container">
     <h1>📅 Fechador - PAPA JOHNS</h1>
     <div class="form-group">
@@ -741,6 +1016,215 @@ function calcularVencimientos() {
     stickerContainer.classList.add('fade-in');
     stickerContainer.scrollIntoView({ behavior: 'smooth' });
 }
+// ===== ADMINISTRACIÓN DE INSUMOS — CON FIREBASE =====
+
+function actualizarIndicadorSync(ok) {
+    const el = document.getElementById('syncIndicador');
+    if (!el) return;
+    if (ok === null) {
+        el.textContent = '⏳ Conectando...';
+        el.style.background = '#f0f0f0'; el.style.color = '#888';
+    } else if (ok) {
+        el.textContent = '🟢 Sincronizado';
+        el.style.background = '#d5f5e3'; el.style.color = '#1e8449';
+    } else {
+        el.textContent = '🔴 Sin conexión';
+        el.style.background = '#fde8e8'; el.style.color = '#922b21';
+    }
+}
+
+// Al iniciar: cargar caché local mientras llega Firebase
+function cargarInsumosPersonalizados() {
+    const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+    Object.assign(vidaUtil, guardados);
+    renderizarInsumosEnSelect();
+    renderizarListaAdmin();
+}
+
+// Agregar insumos personalizados al <select>
+function renderizarInsumosEnSelect() {
+    const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+    const cats = JSON.parse(localStorage.getItem('insumosCategorias') || '{}');
+    const porCategoria = {};
+    for (const nombre of Object.keys(guardados)) {
+        const cat = cats[nombre] || '🧂 OTROS INSUMOS';
+        if (!porCategoria[cat]) porCategoria[cat] = [];
+        porCategoria[cat].push(nombre);
+    }
+    const select = document.getElementById('producto');
+    select.querySelectorAll('option[data-custom]').forEach(o => o.remove());
+    for (const [cat, nombres] of Object.entries(porCategoria)) {
+        let optgroup = Array.from(select.querySelectorAll('optgroup')).find(g => g.label === cat);
+        if (!optgroup) {
+            optgroup = document.createElement('optgroup');
+            optgroup.label = cat;
+            select.appendChild(optgroup);
+        }
+        for (const nombre of nombres) {
+            if (!optgroup.querySelector(`option[value="${nombre.replace(/"/g,'\\"')}"]`)) {
+                const opt = document.createElement('option');
+                opt.value = nombre;
+                opt.textContent = nombre;
+                opt.setAttribute('data-custom', '1');
+                optgroup.appendChild(opt);
+            }
+        }
+    }
+}
+
+function renderizarListaAdmin() {
+    const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+    const cats = JSON.parse(localStorage.getItem('insumosCategorias') || '{}');
+    const container = document.getElementById('insumosListaContainer');
+    const lista = document.getElementById('insumosLista');
+    const nombres = Object.keys(guardados);
+    if (nombres.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'block';
+    lista.innerHTML = nombres.map(nombre => {
+        const v = guardados[nombre];
+        const fmt = x => x === null ? 'N/A' : x === 'Según empaque' ? 'S/Empaque' : x === '11:59 p. m.' ? 'Cierre' : (typeof x === 'number' ? x + 'd' : x);
+        const cat = cats[nombre] || '';
+        const nomEsc = nombre.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        return `<div class="insumo-item">
+            <div>
+                <div class="insumo-nombre">${nombre}</div>
+                <div class="insumo-vida">📦 ${fmt(v.recibido)} &nbsp;|&nbsp; 🍳 ${fmt(v.preparado)} &nbsp;|&nbsp; 🏭 ${fmt(v.linea)} &nbsp;|&nbsp; ${cat}</div>
+            </div>
+            <button class="btn-eliminar-insumo" onclick="eliminarInsumo('${nomEsc}')">🗑️</button>
+        </div>`;
+    }).join('');
+}
+
+async function agregarInsumo() {
+    const nombre = document.getElementById('adminNombre').value.trim();
+    const categoria = document.getElementById('adminCategoria').value;
+
+    if (!nombre) { mostrarMsg('error', '⚠️ El nombre del insumo es obligatorio.'); return; }
+    if (vidaUtil[nombre]) { mostrarMsg('error', '⚠️ Ya existe un insumo con ese nombre.'); return; }
+
+    // RECIBIDO
+    const recTipo = document.getElementById('adminRecibidoTipo').value;
+    let recibido;
+    if (recTipo === 'segun_empaque') recibido = 'Según empaque';
+    else if (recTipo === 'no_aplica') recibido = null;
+    else {
+        const v = parseInt(document.getElementById('adminRecibidoDias').value);
+        if (!v || v < 1) { mostrarMsg('error', '⚠️ Ingresa los días de vida útil para RECIBIDO.'); return; }
+        recibido = v;
+    }
+
+    // PREPARADO
+    const prepTipo = document.getElementById('adminPreparadoTipo').value;
+    let preparado;
+    if (prepTipo === 'segun_empaque') preparado = 'Según empaque';
+    else if (prepTipo === 'no_aplica') preparado = null;
+    else if (prepTipo === 'cierre') preparado = '11:59 p. m.';
+    else {
+        const v = parseInt(document.getElementById('adminPreparadoValor').value);
+        if (!v || v < 1) { mostrarMsg('error', '⚠️ Ingresa el valor de vida útil para PREPARADO.'); return; }
+        preparado = prepTipo === 'horas' ? `${v} horas` : v;
+    }
+
+    // LÍNEA
+    const linTipo = document.getElementById('adminLineaTipo').value;
+    let linea;
+    if (linTipo === 'segun_empaque') linea = 'Según empaque';
+    else if (linTipo === 'no_aplica') linea = null;
+    else if (linTipo === 'cierre') linea = '11:59 p. m.';
+    else {
+        const v = parseInt(document.getElementById('adminLineaValor').value);
+        if (!v || v < 1) { mostrarMsg('error', '⚠️ Ingresa el valor de vida útil para LÍNEA.'); return; }
+        linea = linTipo === 'horas' ? `${v} horas` : v;
+    }
+
+    const nuevoInsumo = { recibido, preparado, linea };
+
+    // Guardar en Firebase (se propaga en tiempo real a todos los dispositivos)
+    try {
+        await window._fbSet(`insumosPersonalizados/${nombre}`, nuevoInsumo);
+        await window._fbSet(`insumosCategorias/${nombre}`, categoria);
+        limpiarFormAdmin();
+        mostrarMsg('exito', `✅ "${nombre}" guardado y sincronizado.`);
+    } catch (e) {
+        // Fallback a localStorage si no hay conexión
+        vidaUtil[nombre] = nuevoInsumo;
+        const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+        guardados[nombre] = nuevoInsumo;
+        localStorage.setItem('insumosPersonalizados', JSON.stringify(guardados));
+        const cats = JSON.parse(localStorage.getItem('insumosCategorias') || '{}');
+        cats[nombre] = categoria;
+        localStorage.setItem('insumosCategorias', JSON.stringify(cats));
+        renderizarInsumosEnSelect();
+        renderizarListaAdmin();
+        limpiarFormAdmin();
+        mostrarMsg('exito', `⚠️ Guardado localmente (sin conexión a Firebase).`);
+        actualizarIndicadorSync(false);
+    }
+}
+
+async function eliminarInsumo(nombre) {
+    if (!confirm(`¿Eliminar el insumo "${nombre}"?`)) return;
+    try {
+        await window._fbRemove(`insumosPersonalizados/${nombre}`);
+        await window._fbRemove(`insumosCategorias/${nombre}`);
+    } catch (e) {
+        // Fallback local
+        delete vidaUtil[nombre];
+        const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+        delete guardados[nombre];
+        localStorage.setItem('insumosPersonalizados', JSON.stringify(guardados));
+        const cats = JSON.parse(localStorage.getItem('insumosCategorias') || '{}');
+        delete cats[nombre];
+        localStorage.setItem('insumosCategorias', JSON.stringify(cats));
+        renderizarInsumosEnSelect();
+        renderizarListaAdmin();
+    }
+}
+
+function toggleAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+}
+function toggleRecibidoInput() {
+    const tipo = document.getElementById('adminRecibidoTipo').value;
+    document.getElementById('adminRecibidoDiasBox').style.display = tipo === 'dias' ? 'block' : 'none';
+}
+function togglePreparadoInput() {
+    const tipo = document.getElementById('adminPreparadoTipo').value;
+    const show = tipo === 'dias' || tipo === 'horas';
+    document.getElementById('adminPreparadoValorBox').style.display = show ? 'block' : 'none';
+    document.getElementById('adminPreparadoValorLabel').textContent = tipo === 'horas' ? 'Cantidad de horas:' : 'Cantidad de días:';
+}
+function toggleLineaInput() {
+    const tipo = document.getElementById('adminLineaTipo').value;
+    const show = tipo === 'dias' || tipo === 'horas';
+    document.getElementById('adminLineaValorBox').style.display = show ? 'block' : 'none';
+    document.getElementById('adminLineaValorLabel').textContent = tipo === 'horas' ? 'Cantidad de horas:' : 'Cantidad de días:';
+}
+function limpiarFormAdmin() {
+    document.getElementById('adminNombre').value = '';
+    document.getElementById('adminRecibidoTipo').value = 'segun_empaque';
+    document.getElementById('adminPreparadoTipo').value = 'dias';
+    document.getElementById('adminLineaTipo').value = 'dias';
+    document.getElementById('adminRecibidoDias').value = '';
+    document.getElementById('adminPreparadoValor').value = '';
+    document.getElementById('adminLineaValor').value = '';
+    toggleRecibidoInput(); togglePreparadoInput(); toggleLineaInput();
+}
+function mostrarMsg(tipo, texto) {
+    const exito = document.getElementById('msgExito');
+    const error = document.getElementById('msgError');
+    exito.style.display = 'none'; error.style.display = 'none';
+    if (tipo === 'exito') { exito.textContent = texto; exito.style.display = 'block'; setTimeout(() => exito.style.display = 'none', 3500); }
+    else { error.textContent = texto; error.style.display = 'block'; setTimeout(() => error.style.display = 'none', 3500); }
+}
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    toggleRecibidoInput(); togglePreparadoInput(); toggleLineaInput();
+    cargarInsumosPersonalizados(); // carga caché local mientras llega Firebase
+});
+
 function limpiarFormulario() {
     document.getElementById('producto').value = "";
     document.getElementById('recibidoSection').innerHTML = '';
