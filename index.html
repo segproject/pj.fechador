@@ -592,6 +592,99 @@ button:active {
 @media (max-width: 400px) {
     .etapa-fila { flex-direction: column; gap: 10px; }
 }
+
+/* ===== STICKER EDITABLE (formulario + resultado fusionados) ===== */
+.sticker-form { margin-top: 18px; }
+.sticker-placeholder {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    padding: 30px 10px;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+    border-radius: 12px;
+}
+.sticker-table-editable {
+    table-layout: fixed;
+}
+.sticker-table-editable th {
+    background-color: #cce5ff;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 8px 4px;
+    width: 20%;
+}
+.sticker-table-editable td {
+    padding: 6px 4px;
+    vertical-align: middle;
+    overflow: hidden;
+}
+.label-celda { width: 68px; text-align: center; }
+.label-principal { font-weight: bold; font-size: 13px; color: #2c3e50; }
+.label-sub { font-size: 10.5px; color: #999; margin-top: 2px; }
+.celda-inicio, .celda-venc { min-width: 120px; }
+.celda-venc { font-size: 13px; font-weight: 600; color: #2c3e50; text-align: center; }
+.celda-noaplica { color: #aaa; font-style: italic; font-size: 13px; text-align: center; }
+.fila-inputs { display: flex; gap: 4px; align-items: center; }
+.fila-inputs-col { display: flex; flex-direction: column; gap: 4px; }
+.input-compacto {
+    width: 100%;
+    padding: 7px 6px;
+    margin-bottom: 0;
+    font-size: 12.5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.btn-ahora-mini {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    background: #eaf4fc;
+    color: #2980b9;
+    border: 1px solid #cde3f5;
+    border-radius: 6px;
+}
+.btn-ahora-mini:hover { background: #d7ebfa; }
+.texto-mini { font-size: 12px; color: #999; text-align: center; }
+
+/* ===== INPUTS DENTRO DE LAS CELDAS DEL STICKER CLÁSICO ===== */
+.input-sticker {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 12px;
+    font-family: inherit;
+    color: #2c3e50;
+    padding: 2px 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.input-sticker:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 1px;
+    border-radius: 4px;
+    background: #f5faff;
+}
+.btn-ahora-fecha {
+    width: 100%;
+    margin-top: 4px;
+    padding: 3px 2px;
+    height: auto;
+    font-size: 10.5px;
+    font-weight: 600;
+    background: #eaf4fc;
+    color: #2980b9;
+    border: 1px solid #cde3f5;
+    border-radius: 5px;
+}
+.btn-ahora-fecha:hover { background: #d7ebfa; }
+.celda-dash { color: #bbb; }
 </style>
 </head>
 <body>
@@ -789,117 +882,32 @@ button:active {
         </div>
     </div>
 
-    <div class="etapa-card recibido" id="tarjetaRecibido">
-        <div class="etapa-header">
-            <span>📦</span>
-            <div class="etapa-titulos">
-                <span class="etapa-titulo">Recibido</span>
-                <span class="etapa-vida-util" id="vidaUtilRecibido"></span>
+    <div class="sticker-form" id="stickerForm">
+        <div class="sticker-placeholder" id="stickerPlaceholder">
+            👆 Selecciona un insumo arriba para empezar a llenar el sticker.
+        </div>
+        <div id="stickerContenido" style="display:none;">
+            <div class="sticker-title">📦 PRODUCTO</div>
+            <div class="sticker-producto" id="stickerProducto"></div>
+            <table class="sticker-table sticker-table-editable">
+                <thead>
+                    <tr><th></th><th>FECHA</th><th>HORA</th><th>FECHA VENC.</th><th>HORA VENC.</th></tr>
+                    <tr><td colspan="5" style="height:5px;background-color:#007bff;"></td></tr>
+                </thead>
+                <tbody id="stickerBody"></tbody>
+            </table>
+            <div class="ajuste-aviso" id="ajusteAviso" style="display:none;"></div>
+            <div class="resumen-fechas" id="resumenFechas" style="display:none;">
+                <p><strong>📅 Fechas de vencimiento:</strong></p>
+                <p>- <strong>RECIBIDO:</strong> <span id="resumenRecibido">-</span></p>
+                <p>- <strong>PREPARADO:</strong> <span id="resumenPreparado">-</span></p>
+                <p>- <strong>EN LÍNEA:</strong> <span id="resumenLinea">-</span></p>
+            </div>
+            <div class="btn-group" style="margin-top:16px;">
+                <button onclick="calcularVencimientos()">✅ Generar Sticker</button>
+                <button class="btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar</button>
             </div>
         </div>
-        <div id="recibidoSection"></div>
-    </div>
-
-    <div class="etapa-card preparado" id="tarjetaPreparado">
-        <div class="etapa-header">
-            <span>🍳</span>
-            <div class="etapa-titulos">
-                <span class="etapa-titulo">Preparado</span>
-                <span class="etapa-vida-util" id="vidaUtilPreparado"></span>
-            </div>
-            <button type="button" class="btn-ahora" id="btnAhoraPreparado" onclick="llenarAhora('preparadoFecha','preparadoHora')">⏱️ Ahora</button>
-        </div>
-        <div id="preparadoContenido">
-            <div class="etapa-fila">
-                <div>
-                    <label for="preparadoFecha">Fecha de inicio</label>
-                    <input type="date" id="preparadoFecha" onchange="actualizarLineaTiempo()" />
-                </div>
-                <div>
-                    <label for="preparadoHora">Hora de inicio</label>
-                    <input type="time" id="preparadoHora" onchange="actualizarLineaTiempo()" />
-                </div>
-            </div>
-            <div id="preparadoManualVencInput" class="manual-input">
-                <div class="etapa-fila">
-                    <div>
-                        <label for="preparadoVencFecha">Vencimiento (según empaque)</label>
-                        <input type="date" id="preparadoVencFecha" />
-                    </div>
-                    <div>
-                        <label for="preparadoVencHora">Hora de vencimiento</label>
-                        <input type="time" id="preparadoVencHora" />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="etapa-noaplica" id="preparadoNoAplica" style="display:none;">No aplica a este insumo.</div>
-    </div>
-
-    <div class="etapa-card linea" id="tarjetaLinea">
-        <div class="etapa-header">
-            <span>🏭</span>
-            <div class="etapa-titulos">
-                <span class="etapa-titulo">Línea</span>
-                <span class="etapa-vida-util" id="vidaUtilLinea"></span>
-            </div>
-            <button type="button" class="btn-ahora" id="btnAhoraLinea" onclick="llenarAhora('lineaFecha','lineaHora')">⏱️ Ahora</button>
-            <span class="etapa-nota" id="lineaNota" style="display:none;">Completa Preparado primero</span>
-        </div>
-        <div id="lineaContenido">
-            <div class="etapa-fila">
-                <div>
-                    <label for="lineaFecha">Fecha de inicio</label>
-                    <input type="date" id="lineaFecha" onchange="actualizarLineaTiempo()" />
-                </div>
-                <div>
-                    <label for="lineaHora">Hora de inicio</label>
-                    <input type="time" id="lineaHora" onchange="actualizarLineaTiempo()" />
-                </div>
-            </div>
-            <div id="lineaManualVencInput" class="manual-input">
-                <div class="etapa-fila">
-                    <div>
-                        <label for="lineaVencFecha">Vencimiento (según empaque)</label>
-                        <input type="date" id="lineaVencFecha" />
-                    </div>
-                    <div>
-                        <label for="lineaVencHora">Hora de vencimiento</label>
-                        <input type="time" id="lineaVencHora" />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="etapa-noaplica" id="lineaNoAplica" style="display:none;">No aplica a este insumo.</div>
-    </div>
-
-    <div class="btn-group">
-        <button onclick="calcularVencimientos()">✅ Generar Sticker</button>
-        <button class="btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar</button>
-    </div>
-</div>
-<div class="sticker-container" id="stickerContainer">
-    <div class="sticker-title">📦 PRODUCTO</div>
-    <div class="sticker-producto" id="stickerProducto"></div>
-    <table class="sticker-table">
-        <thead>
-            <tr>
-                <th></th>
-                <th>FECHA</th>
-                <th>HORA</th>
-                <th>FECHA VENC.</th>
-                <th>HORA VENC.</th>
-            </tr>
-            <tr><td colspan="5" style="height:5px;background-color:#007bff;"></td></tr>
-        </thead>
-        <tbody id="stickerBody"></tbody>
-    </table>
-    <div class="ajuste-aviso" id="ajusteAviso" style="display:none;"></div>
-    <div class="resumen-fechas" id="resumenFechas" style="display:none;">
-        <p><strong>📅 Fechas de vencimiento:</strong></p>
-        <p>- <strong>RECIBIDO:</strong> <span id="resumenRecibido">-</span></p>
-        <p>- <strong>PREPARADO:</strong> <span id="resumenPreparado">-</span></p>
-        <p>- <strong>EN LÍNEA:</strong> <span id="resumenLinea">-</span></p>
     </div>
 </div>
 <script>
@@ -1109,98 +1117,91 @@ const horariosCierre = {
 };
 function updateShelfLife() {
     const producto = document.getElementById('producto').value;
-    const recibidoSection = document.getElementById('recibidoSection');
-    const p = document.getElementById('preparadoManualVencInput');
-    const l = document.getElementById('lineaManualVencInput');
-    const tarjetaRecibido = document.getElementById('tarjetaRecibido');
-    const tarjetaPreparado = document.getElementById('tarjetaPreparado');
-    const tarjetaLinea = document.getElementById('tarjetaLinea');
-    const preparadoContenido = document.getElementById('preparadoContenido');
-    const preparadoNoAplica = document.getElementById('preparadoNoAplica');
-    const lineaContenido = document.getElementById('lineaContenido');
-    const lineaNoAplica = document.getElementById('lineaNoAplica');
-    const btnAhoraPreparado = document.getElementById('btnAhoraPreparado');
-    const btnAhoraLinea = document.getElementById('btnAhoraLinea');
+    const placeholder = document.getElementById('stickerPlaceholder');
+    const contenido = document.getElementById('stickerContenido');
 
     if (!producto) {
-        recibidoSection.innerHTML = '';
-        p.style.display = 'none';
-        l.style.display = 'none';
-        tarjetaRecibido.classList.remove('tenue');
-        tarjetaPreparado.classList.remove('tenue');
-        tarjetaLinea.classList.remove('tenue');
-        preparadoContenido.style.display = 'block';
-        preparadoNoAplica.style.display = 'none';
-        lineaContenido.style.display = 'block';
-        lineaNoAplica.style.display = 'none';
-        btnAhoraPreparado.style.display = 'inline-flex';
-        btnAhoraLinea.style.display = 'inline-flex';
-        document.getElementById('lineaNota').style.display = 'none';
-        document.getElementById('vidaUtilRecibido').textContent = '';
-        document.getElementById('vidaUtilPreparado').textContent = '';
-        document.getElementById('vidaUtilLinea').textContent = '';
+        placeholder.style.display = 'block';
+        contenido.style.display = 'none';
+        document.getElementById('stickerBody').innerHTML = '';
         reiniciarLineaTiempo();
         return;
     }
     const s = vidaUtil[producto];
-    document.getElementById('vidaUtilRecibido').textContent = formatoVidaUtil(s.recibido);
-    document.getElementById('vidaUtilPreparado').textContent = formatoVidaUtil(s.preparado, s.preparadoDesdeDiaCero);
-    document.getElementById('vidaUtilLinea').textContent = formatoVidaUtil(s.linea);
-
-    // === RECIBIDO ===
-    if (s.recibido === null) {
-        recibidoSection.innerHTML = `<div class="etapa-noaplica">No aplica a este insumo.</div>`;
-        tarjetaRecibido.classList.add('tenue');
-    } else if (s.recibido === "Según empaque") {
-        recibidoSection.innerHTML = `
-            <label for="recibidoVencFecha">Fecha de vencimiento (según empaque)</label>
-            <input type="date" id="recibidoVencFecha" onchange="actualizarLineaTiempo()" />
-            <p class="optional-label">* No se requiere fecha de inicio.</p>
-        `;
-        tarjetaRecibido.classList.remove('tenue');
-    } else {
-        recibidoSection.innerHTML = `
-            <div class="etapa-fila">
-                <div>
-                    <label for="recibidoFecha">Fecha de inicio</label>
-                    <input type="date" id="recibidoFecha" onchange="actualizarLineaTiempo()" />
-                </div>
-                <div>
-                    <button type="button" class="btn-ahora" style="margin-top:19px;width:100%;" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
-                </div>
-            </div>
-        `;
-        tarjetaRecibido.classList.remove('tenue');
-    }
-
-    // === PREPARADO ===
-    if (s.preparado === null) {
-        preparadoContenido.style.display = 'none';
-        preparadoNoAplica.style.display = 'block';
-        tarjetaPreparado.classList.add('tenue');
-        btnAhoraPreparado.style.display = 'none';
-    } else {
-        preparadoContenido.style.display = 'block';
-        preparadoNoAplica.style.display = 'none';
-        tarjetaPreparado.classList.remove('tenue');
-        btnAhoraPreparado.style.display = 'inline-flex';
-    }
-    p.style.display = (s.preparado === "Según empaque") ? 'block' : 'none';
-
-    // === LÍNEA ===
-    if (s.linea === null) {
-        lineaContenido.style.display = 'none';
-        lineaNoAplica.style.display = 'block';
-        btnAhoraLinea.style.display = 'none';
-        document.getElementById('lineaNota').style.display = 'none';
-    } else {
-        lineaContenido.style.display = 'block';
-        lineaNoAplica.style.display = 'none';
-        btnAhoraLinea.style.display = 'inline-flex';
-    }
-    l.style.display = (s.linea === "Según empaque") ? 'block' : 'none';
-
+    placeholder.style.display = 'none';
+    contenido.style.display = 'block';
+    document.getElementById('stickerProducto').textContent = producto;
+    document.getElementById('ajusteAviso').style.display = 'none';
+    document.getElementById('resumenFechas').style.display = 'none';
+    document.getElementById('stickerBody').innerHTML = construirFilasSticker(s);
     actualizarLineaTiempo();
+}
+
+// ===== CONSTRUCCIÓN DE LAS FILAS DEL STICKER EDITABLE =====
+function construirFilasSticker(s) {
+    return `
+        <tr>
+            <td class="label"><div>RECIB.</div><div class="label-sub">${formatoVidaUtilCorto(s.recibido)}</div></td>
+            ${celdaRecibido(s)}
+        </tr>
+        <tr>
+            <td class="label"><div>PREP</div><div class="label-sub">${formatoVidaUtilCorto(s.preparado, s.preparadoDesdeDiaCero)}</div></td>
+            ${celdaEtapa(s.preparado, 'preparado')}
+        </tr>
+        <tr>
+            <td class="label"><div>LINEA</div><div class="label-sub">${formatoVidaUtilCorto(s.linea)}</div></td>
+            ${celdaEtapa(s.linea, 'linea')}
+        </tr>
+    `;
+}
+
+function celdaRecibido(s) {
+    if (s.recibido === null) {
+        return `<td colspan="4" class="celda-noaplica">No aplica a este insumo.</td>`;
+    }
+    if (s.recibido === "Según empaque") {
+        return `
+            <td class="celda-dash">-</td>
+            <td class="celda-dash">-</td>
+            <td class="time-col"><input type="date" id="recibidoVencFecha" class="input-sticker" onchange="actualizarLineaTiempo()" /></td>
+            <td class="celda-dash">-</td>
+        `;
+    }
+    return `
+        <td>
+            <input type="date" id="recibidoFecha" class="input-sticker" onchange="actualizarLineaTiempo()" />
+            <button type="button" class="btn-ahora-fecha" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
+        </td>
+        <td class="celda-dash">-</td>
+        <td class="time-col"><span id="venceRecibido">-</span></td>
+        <td class="celda-dash">-</td>
+    `;
+}
+
+function celdaEtapa(valor, prefijo) {
+    if (valor === null) {
+        return `<td colspan="4" class="celda-noaplica">No aplica a este insumo.</td>`;
+    }
+    const fechaHtml = `
+        <input type="date" id="${prefijo}Fecha" class="input-sticker" onchange="actualizarLineaTiempo()" />
+        <button type="button" class="btn-ahora-fecha" onclick="llenarAhora('${prefijo}Fecha','${prefijo}Hora')">⏱️ Ahora</button>
+    `;
+    const horaHtml = `<input type="time" id="${prefijo}Hora" class="input-sticker" onchange="actualizarLineaTiempo()" />`;
+    const sufijo = prefijo === 'preparado' ? 'Preparado' : 'Linea';
+    let vencFechaHtml, vencHoraHtml;
+    if (valor === "Según empaque") {
+        vencFechaHtml = `<input type="date" id="${prefijo}VencFecha" class="input-sticker" />`;
+        vencHoraHtml = `<input type="time" id="${prefijo}VencHora" class="input-sticker" />`;
+    } else {
+        vencFechaHtml = `<span id="vence${sufijo}Fecha">-</span>`;
+        vencHoraHtml = `<span id="vence${sufijo}Hora">-</span>`;
+    }
+    return `
+        <td>${fechaHtml}</td>
+        <td class="time-col">${horaHtml}</td>
+        <td>${vencFechaHtml}</td>
+        <td class="time-col">${vencHoraHtml}</td>
+    `;
 }
 
 // ===== BOTÓN "AHORA" Y LÍNEA DE TIEMPO DE PROGRESO =====
@@ -1264,17 +1265,6 @@ function actualizarLineaTiempo() {
 
     if (doneRecibido) document.getElementById('lineaTiempoRP').classList.add('completo');
     if (donePreparado) document.getElementById('lineaTiempoPL').classList.add('completo');
-
-    // Atenuar visualmente la tarjeta LÍNEA hasta que PREPARADO esté completo (si aplica)
-    const tarjetaLinea = document.getElementById('tarjetaLinea');
-    const lineaNota = document.getElementById('lineaNota');
-    if (lineaAplica && preparadoAplica && !donePreparado) {
-        tarjetaLinea.classList.add('tenue');
-        lineaNota.style.display = 'inline';
-    } else {
-        tarjetaLinea.classList.remove('tenue');
-        lineaNota.style.display = 'none';
-    }
 }
 
 function marcarPaso(circId, labelId, completo, habilitado) {
@@ -1287,15 +1277,13 @@ function marcarPaso(circId, labelId, completo, habilitado) {
         label.classList.add('activo-label');
     }
 }
-function formatoVidaUtil(valor, desdeDiaCero) {
-    if (valor === null) return 'No aplica';
-    if (valor === "Según empaque") return 'Vida útil: según empaque';
-    if (valor === "11:59 p. m.") return 'Vence: hasta el cierre (11:59 pm)';
-    if (typeof valor === 'string' && valor.includes('horas')) return `Vida útil: ${valor.replace('horas', 'hora(s)')}`;
-    if (typeof valor === 'number') {
-        return `Vida útil: ${valor} día(s)` + (desdeDiaCero ? ' (desde día 0)' : '');
-    }
-    return String(valor);
+function formatoVidaUtilCorto(valor, desdeDiaCero) {
+    if (valor === null) return '';
+    if (valor === "Según empaque") return 'según empaque';
+    if (valor === "11:59 p. m.") return 'hasta cierre';
+    if (typeof valor === 'string' && valor.includes('horas')) return valor.replace(' horas', 'h').replace('horas', 'h');
+    if (typeof valor === 'number') return `${valor}d` + (desdeDiaCero ? ' (día 0)' : '');
+    return '';
 }
 function formatearFecha(fechaStr) {
     if (!fechaStr) return "-";
@@ -1354,15 +1342,6 @@ function obtenerUltimoMinutoDia(fechaISO) {
         horaMostrar: formatearHora(horaCierre)
     };
 }
-function montarFilaSticker(etiqueta, fecha, hora, fechaVenc, horaVenc) {
-    return `<tr>
-        <td class="label">${etiqueta}</td>
-        <td>${fecha}</td>
-        <td class="time-col"><span>${hora}</span></td>
-        <td>${fechaVenc}</td>
-        <td class="time-col"><span>${horaVenc}</span></td>
-    </tr>`;
-}
 function obtenerHoraCierre(fechaYYYYMMDD) {
     const fecha = new Date(`${fechaYYYYMMDD}T00:00:00-05:00`);
     const diaSemana = fecha.getDay();
@@ -1376,7 +1355,6 @@ function calcularVencimientos() {
     }
     const shelfLife = vidaUtil[producto];
     let resumen = [`<strong>${producto}</strong><br><br>`];
-    let filas = [];
     let ajustes = [];
     const rF = document.getElementById('recibidoFecha')?.value;
     const pF = document.getElementById('preparadoFecha')?.value;
@@ -1412,22 +1390,20 @@ function calcularVencimientos() {
             resumen.push(`<strong>RECIBIDO:</strong> Según empaque → No ingresado`);
             fechaVencRecibidoMostrar = "No ingresado";
         }
-        filas.push(montarFilaSticker("RECIB.", "-", "-", fechaVencRecibidoMostrar, "-"));
     } else if (shelfLife.recibido !== null) {
         if (rF) {
             // ✅ CAMBIO: Restar 1 día para que el día de ingreso cuente como Día 1
             fechaVencRecibidoISO = sumarDiasISO(rF, shelfLife.recibido - 1);
             fechaVencRecibidoMostrar = formatearFecha(fechaVencRecibidoISO);
             resumen.push(`<strong>RECIBIDO:</strong> ${shelfLife.recibido} día(s) → ${fechaVencRecibidoMostrar}`);
-            filas.push(montarFilaSticker("RECIB.", formatearFecha(rF), "-", fechaVencRecibidoMostrar, "-"));
         } else {
             resumen.push(`<strong>RECIBIDO:</strong> No ingresado`);
-            filas.push(montarFilaSticker("RECIB.", "-", "-", "-", "-"));
         }
     } else {
         resumen.push(`<strong>RECIBIDO:</strong> No aplica`);
-        filas.push(montarFilaSticker("RECIB.", "-", "-", "-", "-"));
     }
+    const elVenceRecibido = document.getElementById('venceRecibido');
+    if (elVenceRecibido) elVenceRecibido.textContent = fechaVencRecibidoMostrar;
     // === PREPARADO ===
     let vencPreparadoOriginal = null;
     let fechaInicioPreparado = null;
@@ -1481,11 +1457,13 @@ function calcularVencimientos() {
             fechaVencPreparadoMostrar = horaVencPreparadoMostrar = "No aplica";
             resumen.push(`<strong>PREPARADO:</strong> No aplica`);
         }
-        filas.push(montarFilaSticker("PREP", formatearFecha(pF), formatearHora(pH), fechaVencPreparadoMostrar, horaVencPreparadoMostrar));
     } else {
         resumen.push(`<strong>PREPARADO:</strong> No ingresado`);
-        filas.push(montarFilaSticker("PREP", "-", "-", "-", "-"));
     }
+    const elVencePreparadoFecha = document.getElementById('vencePreparadoFecha');
+    const elVencePreparadoHora = document.getElementById('vencePreparadoHora');
+    if (elVencePreparadoFecha) elVencePreparadoFecha.textContent = fechaVencPreparadoMostrar;
+    if (elVencePreparadoHora) elVencePreparadoHora.textContent = horaVencPreparadoMostrar;
     // === LÍNEA ===
     let vencLineaOriginal = null;
     let fechaInicioLinea = null;
@@ -1530,10 +1508,8 @@ function calcularVencimientos() {
             fechaVencLineaMostrar = horaVencLineaMostrar = "No aplica";
             resumen.push(`<strong>LÍNEA:</strong> No aplica`);
         }
-        filas.push(montarFilaSticker("LINEA", formatearFecha(lF), formatearHora(lH), fechaVencLineaMostrar, horaVencLineaMostrar));
     } else {
         resumen.push(`<strong>LÍNEA:</strong> No ingresado`);
-        filas.push(montarFilaSticker("LINEA", "-", "-", "-", "-"));
     }
     // === AJUSTES AUTOMÁTICOS ===
     if (vencPreparadoOriginal && vencLineaOriginal) {
@@ -1548,7 +1524,6 @@ function calcularVencimientos() {
             };
             fechaVencLineaFinalMostrar = nuevaFechaMostrar;
             horaVencLineaFinalMostrar = nuevaHoraMostrar;
-            filas[2] = montarFilaSticker("LINEA", formatearFecha(lF), formatearHora(lH), nuevaFechaMostrar, nuevaHoraMostrar);
             ajustes.push(`LÍNEA ajustado a ${nuevaFechaMostrar} ${nuevaHoraMostrar} (fecha/hora de PREPARADO)`);
         } else {
             vencLineaFinal = vencLineaOriginal;
@@ -1560,8 +1535,11 @@ function calcularVencimientos() {
         fechaVencLineaFinalMostrar = fechaVencLineaMostrar;
         horaVencLineaFinalMostrar = horaVencLineaMostrar;
     }
+    const elVenceLineaFecha = document.getElementById('venceLineaFecha');
+    const elVenceLineaHora = document.getElementById('venceLineaHora');
+    if (elVenceLineaFecha) elVenceLineaFecha.textContent = fechaVencLineaFinalMostrar;
+    if (elVenceLineaHora) elVenceLineaHora.textContent = horaVencLineaFinalMostrar;
     document.getElementById('stickerProducto').textContent = producto;
-    document.getElementById('stickerBody').innerHTML = filas.join('');
     const aviso = document.getElementById('ajusteAviso');
     if (ajustes.length > 0) {
         aviso.textContent = "⚠️ Ajustes automáticos aplicados: " + ajustes.join("; ");
@@ -1597,10 +1575,7 @@ function calcularVencimientos() {
     resumenPreparado.textContent = preparadoTexto;
     resumenLinea.textContent = lineaTexto;
     resumenFechas.style.display = 'block';
-    const stickerContainer = document.getElementById('stickerContainer');
-    stickerContainer.style.display = 'block';
-    stickerContainer.classList.add('fade-in');
-    stickerContainer.scrollIntoView({ behavior: 'smooth' });
+    resumenFechas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 // ===== ADMINISTRACIÓN DE INSUMOS — CON FIREBASE =====
 
@@ -1813,20 +1788,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function limpiarFormulario() {
     limpiarProducto(false);
-    document.getElementById('recibidoSection').innerHTML = '';
-    document.getElementById('preparadoFecha').value = "";
-    document.getElementById('preparadoHora').value = "";
-    document.getElementById('preparadoVencFecha').value = "";
-    document.getElementById('preparadoVencHora').value = "";
-    document.getElementById('lineaFecha').value = "";
-    document.getElementById('lineaHora').value = "";
-    document.getElementById('lineaVencFecha').value = "";
-    document.getElementById('lineaVencHora').value = "";
-    document.getElementById('stickerContainer').style.display = 'none';
-    document.getElementById('resumenFechas').style.display = 'none';
-    document.getElementById('preparadoManualVencInput').style.display = 'none';
-    document.getElementById('lineaManualVencInput').style.display = 'none';
-    document.getElementById('ajusteAviso').style.display = 'none';
     document.getElementById('productoInput').focus();
 }
 </script>
