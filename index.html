@@ -1183,13 +1183,13 @@ function celdaRecibido(s) {
         return `
             <td class="celda-dash">-</td>
             <td class="celda-dash">-</td>
-            <td class="time-col"><input type="date" id="recibidoVencFecha" class="input-sticker" onchange="actualizarLineaTiempo()" /></td>
+            <td class="time-col"><input type="date" id="recibidoVencFecha" class="input-sticker" lang="en-GB" onchange="actualizarLineaTiempo()" /></td>
             <td class="celda-dash">-</td>
         `;
     }
     return `
         <td>
-            <input type="date" id="recibidoFecha" class="input-sticker" onchange="actualizarLineaTiempo()" />
+            <input type="date" id="recibidoFecha" class="input-sticker" lang="en-GB" onchange="actualizarLineaTiempo()" />
             <button type="button" class="btn-ahora-fecha" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
         </td>
         <td class="celda-dash">-</td>
@@ -1203,14 +1203,14 @@ function celdaEtapa(valor, prefijo) {
         return `<td colspan="4" class="celda-noaplica">No aplica a este insumo.</td>`;
     }
     const fechaHtml = `
-        <input type="date" id="${prefijo}Fecha" class="input-sticker" onchange="actualizarLineaTiempo()" />
+        <input type="date" id="${prefijo}Fecha" class="input-sticker" lang="en-GB" onchange="actualizarLineaTiempo()" />
         <button type="button" class="btn-ahora-fecha" onclick="llenarAhora('${prefijo}Fecha','${prefijo}Hora')">⏱️ Ahora</button>
     `;
     const horaHtml = `<input type="time" id="${prefijo}Hora" class="input-sticker" onchange="actualizarLineaTiempo()" />`;
     const sufijo = prefijo === 'preparado' ? 'Preparado' : 'Linea';
     let vencFechaHtml, vencHoraHtml;
     if (valor === "Según empaque") {
-        vencFechaHtml = `<input type="date" id="${prefijo}VencFecha" class="input-sticker" />`;
+        vencFechaHtml = `<input type="date" id="${prefijo}VencFecha" class="input-sticker" lang="en-GB" />`;
         vencHoraHtml = `<input type="time" id="${prefijo}VencHora" class="input-sticker" />`;
     } else {
         vencFechaHtml = `<span id="vence${sufijo}Fecha">-</span>`;
