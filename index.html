@@ -236,7 +236,8 @@ button:active {
     font-weight: 500;
 }
 @media (max-width: 600px) {
-    .container { padding: 15px; margin: 10px; }
+    body { padding: 8px; }
+    .container { padding: 15px; margin: 0 0 15px 0; }
     h1 { font-size: 24px; }
     .sticker-container { padding: 15px; margin: 15px auto; }
     .sticker-title { font-size: 22px; }
@@ -291,6 +292,7 @@ button:active {
     margin-bottom: 18px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -543,6 +545,7 @@ button:active {
 .etapa-header {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 10px;
 }
@@ -561,9 +564,12 @@ button:active {
 }
 .etapa-nota {
     font-size: 12px;
-    color: #999;
-    margin-left: auto;
-    text-align: right;
+    color: #b9770e;
+    background: #fff8e6;
+    border: 1px solid #ffe8b3;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 4px;
 }
 .btn-ahora {
     margin-left: auto;
@@ -844,8 +850,8 @@ button:active {
                 <span class="etapa-vida-util" id="vidaUtilLinea"></span>
             </div>
             <button type="button" class="btn-ahora" id="btnAhoraLinea" onclick="llenarAhora('lineaFecha','lineaHora')">⏱️ Ahora</button>
-            <span class="etapa-nota" id="lineaNota" style="display:none;">Completa Preparado primero</span>
         </div>
+        <div class="etapa-nota" id="lineaNota" style="display:none;">⏳ Completa Preparado primero</div>
         <div id="lineaContenido">
             <div class="etapa-fila">
                 <div>
@@ -1270,7 +1276,7 @@ function actualizarLineaTiempo() {
     const lineaNota = document.getElementById('lineaNota');
     if (lineaAplica && preparadoAplica && !donePreparado) {
         tarjetaLinea.classList.add('tenue');
-        lineaNota.style.display = 'inline';
+        lineaNota.style.display = 'block';
     } else {
         tarjetaLinea.classList.remove('tenue');
         lineaNota.style.display = 'none';
