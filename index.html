@@ -802,6 +802,7 @@ button:active {
                 <span class="etapa-titulo">Recibido</span>
                 <span class="etapa-vida-util" id="vidaUtilRecibido"></span>
             </div>
+            <button type="button" class="btn-ahora" id="btnAhoraRecibido" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
         </div>
         <div id="recibidoSection"></div>
     </div>
@@ -819,7 +820,7 @@ button:active {
             <div class="etapa-fila">
                 <div>
                     <label for="preparadoFecha">Fecha de inicio</label>
-                    <input type="date" id="preparadoFecha" onchange="actualizarLineaTiempo()" />
+                    <input type="date" id="preparadoFecha" lang="en-GB" onchange="actualizarLineaTiempo()" />
                 </div>
                 <div>
                     <label for="preparadoHora">Hora de inicio</label>
@@ -830,7 +831,7 @@ button:active {
                 <div class="etapa-fila">
                     <div>
                         <label for="preparadoVencFecha">Vencimiento (según empaque)</label>
-                        <input type="date" id="preparadoVencFecha" />
+                        <input type="date" id="preparadoVencFecha" lang="en-GB" />
                     </div>
                     <div>
                         <label for="preparadoVencHora">Hora de vencimiento</label>
@@ -856,7 +857,7 @@ button:active {
             <div class="etapa-fila">
                 <div>
                     <label for="lineaFecha">Fecha de inicio</label>
-                    <input type="date" id="lineaFecha" onchange="actualizarLineaTiempo()" />
+                    <input type="date" id="lineaFecha" lang="en-GB" onchange="actualizarLineaTiempo()" />
                 </div>
                 <div>
                     <label for="lineaHora">Hora de inicio</label>
@@ -867,7 +868,7 @@ button:active {
                 <div class="etapa-fila">
                     <div>
                         <label for="lineaVencFecha">Vencimiento (según empaque)</label>
-                        <input type="date" id="lineaVencFecha" />
+                        <input type="date" id="lineaVencFecha" lang="en-GB" />
                     </div>
                     <div>
                         <label for="lineaVencHora">Hora de vencimiento</label>
@@ -1139,6 +1140,7 @@ function updateShelfLife() {
         preparadoNoAplica.style.display = 'none';
         lineaContenido.style.display = 'block';
         lineaNoAplica.style.display = 'none';
+        document.getElementById('btnAhoraRecibido').style.display = 'none';
         btnAhoraPreparado.style.display = 'inline-flex';
         btnAhoraLinea.style.display = 'inline-flex';
         document.getElementById('lineaNota').style.display = 'none';
@@ -1154,29 +1156,26 @@ function updateShelfLife() {
     document.getElementById('vidaUtilLinea').textContent = formatoVidaUtil(s.linea);
 
     // === RECIBIDO ===
+    const btnAhoraRecibido = document.getElementById('btnAhoraRecibido');
     if (s.recibido === null) {
         recibidoSection.innerHTML = `<div class="etapa-noaplica">No aplica a este insumo.</div>`;
         tarjetaRecibido.classList.add('tenue');
+        btnAhoraRecibido.style.display = 'none';
     } else if (s.recibido === "Según empaque") {
         recibidoSection.innerHTML = `
             <label for="recibidoVencFecha">Fecha de vencimiento (según empaque)</label>
-            <input type="date" id="recibidoVencFecha" onchange="actualizarLineaTiempo()" />
+            <input type="date" id="recibidoVencFecha" lang="en-GB" onchange="actualizarLineaTiempo()" />
             <p class="optional-label">* No se requiere fecha de inicio.</p>
         `;
         tarjetaRecibido.classList.remove('tenue');
+        btnAhoraRecibido.style.display = 'none';
     } else {
         recibidoSection.innerHTML = `
-            <div class="etapa-fila">
-                <div>
-                    <label for="recibidoFecha">Fecha de inicio</label>
-                    <input type="date" id="recibidoFecha" onchange="actualizarLineaTiempo()" />
-                </div>
-                <div>
-                    <button type="button" class="btn-ahora" style="margin-top:19px;width:100%;" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
-                </div>
-            </div>
+            <label for="recibidoFecha">Fecha de inicio</label>
+            <input type="date" id="recibidoFecha" lang="en-GB" onchange="actualizarLineaTiempo()" />
         `;
         tarjetaRecibido.classList.remove('tenue');
+        btnAhoraRecibido.style.display = 'inline-flex';
     }
 
     // === PREPARADO ===
