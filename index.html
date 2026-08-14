@@ -391,6 +391,207 @@ button:active {
     font-weight: 600;
     display: none;
 }
+
+/* ===== COMBOBOX DE BÚSQUEDA DE PRODUCTOS ===== */
+.combobox-wrapper {
+    position: relative;
+}
+.combobox-input {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    margin-bottom: 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+.combobox-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+.combobox-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    background: #eee;
+    color: #666;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.combobox-clear:hover { background: #ddd; }
+.combobox-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 320px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 50;
+}
+.combobox-dropdown.abierto { display: block; }
+.dropdown-categoria {
+    position: sticky;
+    top: 0;
+    background: #e9f7fe;
+    color: #2c3e50;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #cce5ff;
+}
+.dropdown-item {
+    padding: 11px 14px;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+}
+.dropdown-item:last-child { border-bottom: none; }
+.dropdown-item:hover, .dropdown-item.activo {
+    background-color: #eaf2f8;
+}
+.dropdown-item mark {
+    background-color: #fff3cd;
+    color: inherit;
+    padding: 0 1px;
+    border-radius: 2px;
+}
+.dropdown-vacio {
+    padding: 16px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+/* ===== LÍNEA DE TIEMPO DE PROGRESO ===== */
+.timeline {
+    display: flex;
+    align-items: center;
+    margin: 18px 0 20px;
+}
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.timeline-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid #ddd;
+    background: #f5f5f5;
+    color: #999;
+    transition: all 0.3s ease;
+}
+.timeline-circle.completo { background: #27ae60; border-color: #27ae60; color: #fff; }
+.timeline-circle.activo { background: #e9f7fe; border-color: #3498db; color: #3498db; }
+.timeline-label {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+    white-space: nowrap;
+}
+.timeline-label.activo-label { color: #2c3e50; font-weight: 600; }
+.timeline-line {
+    flex: 1;
+    height: 2px;
+    background: #ddd;
+    margin: 0 4px 18px;
+    transition: background 0.3s ease;
+}
+.timeline-line.completo { background: #27ae60; }
+
+/* ===== TARJETAS POR ETAPA ===== */
+.etapa-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-left: 4px solid #ccc;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+.etapa-card.recibido { border-left-color: #16a085; }
+.etapa-card.preparado { border-left-color: #3498db; }
+.etapa-card.linea { border-left-color: #e67e22; }
+.etapa-card.tenue { opacity: 0.55; }
+.etapa-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.etapa-titulo { font-weight: 600; font-size: 15px; color: #2c3e50; }
+.etapa-titulos {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    flex: 1;
+    min-width: 0;
+}
+.etapa-vida-util {
+    font-size: 11.5px;
+    color: #888;
+    font-weight: 500;
+}
+.etapa-nota {
+    font-size: 12px;
+    color: #999;
+    margin-left: auto;
+    text-align: right;
+}
+.btn-ahora {
+    margin-left: auto;
+    width: auto;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #eaf4fc;
+    color: #2980b9;
+    border: 1px solid #cde3f5;
+}
+.btn-ahora:hover { background: #d7ebfa; }
+.etapa-fila {
+    display: flex;
+    gap: 8px;
+}
+.etapa-fila > div { flex: 1; min-width: 0; }
+.etapa-fila label { font-size: 12px; margin-bottom: 4px; }
+.etapa-fila input { margin-bottom: 0; }
+.etapa-noaplica {
+    font-size: 13px;
+    color: #aaa;
+    font-style: italic;
+    padding: 6px 0 2px;
+}
+@media (max-width: 400px) {
+    .etapa-fila { flex-direction: column; gap: 10px; }
+}
 </style>
 </head>
 <body>
@@ -486,8 +687,13 @@ button:active {
 <div class="container">
     <h1>📅 Fechador - PAPA JOHNS</h1>
     <div class="form-group">
-        <label for="producto">📦 Seleccione el Producto:</label>
-        <select id="producto" onchange="updateShelfLife()">
+        <label for="productoInput">📦 Seleccione el Producto:</label>
+        <div class="combobox-wrapper" id="comboboxWrapper">
+            <input type="text" id="productoInput" class="combobox-input" placeholder="🔍 Buscar o seleccionar un producto..." autocomplete="off" />
+            <button type="button" class="combobox-clear" id="comboboxClear" title="Limpiar">✕</button>
+            <div class="combobox-dropdown" id="productoDropdown"></div>
+        </div>
+        <select id="producto" style="display:none;" aria-hidden="true">
             <option value="">-- Seleccione un producto --</option>
             <optgroup label="🍖 CÁRNICOS EN TROZOS Y RODAJAS">
                 <option value="Alitas de pollo - local">Alitas de pollo - local</option>
@@ -565,31 +771,108 @@ button:active {
             </optgroup>
         </select>
     </div>
-    <div class="form-group" id="recibidoSection"></div>
-    <div class="form-group">
-        <label for="preparadoFecha">🍳 PREPARADO - Fecha de Inicio:</label>
-        <input type="date" id="preparadoFecha" />
-        <label for="preparadoHora">⏰ Hora de Inicio (HH:MM):</label>
-        <input type="time" id="preparadoHora" />
-        <div id="preparadoManualVencInput" class="manual-input">
-            <label for="preparadoVencFecha">📆 Fecha de Vencimiento (Según empaque):</label>
-            <input type="date" id="preparadoVencFecha" />
-            <label for="preparadoVencHora">🕒 Hora de Vencimiento (HH:MM):</label>
-            <input type="time" id="preparadoVencHora" />
+    <p class="optional-label" id="productoAyuda" style="margin-top:-4px;">Escribe para buscar; también puedes ver todo tocando el campo.</p>
+    <div class="timeline" id="timelineProgreso">
+        <div class="timeline-step">
+            <div class="timeline-circle" id="circRecibido">1</div>
+            <div class="timeline-label" id="labelRecibido">Recibido</div>
+        </div>
+        <div class="timeline-line" id="lineaTiempoRP"></div>
+        <div class="timeline-step">
+            <div class="timeline-circle" id="circPreparado">2</div>
+            <div class="timeline-label" id="labelPreparado">Preparado</div>
+        </div>
+        <div class="timeline-line" id="lineaTiempoPL"></div>
+        <div class="timeline-step">
+            <div class="timeline-circle" id="circLinea">3</div>
+            <div class="timeline-label" id="labelLinea">Línea</div>
         </div>
     </div>
-    <div class="form-group">
-        <label for="lineaFecha">🏭 LÍNEA - Fecha de Inicio:</label>
-        <input type="date" id="lineaFecha" />
-        <label for="lineaHora">⏰ Hora de Inicio (HH:MM):</label>
-        <input type="time" id="lineaHora" />
-        <div id="lineaManualVencInput" class="manual-input">
-            <label for="lineaVencFecha">📆 Fecha de Vencimiento (Según empaque):</label>
-            <input type="date" id="lineaVencFecha" />
-            <label for="lineaVencHora">🕒 Hora de Vencimiento (HH:MM):</label>
-            <input type="time" id="lineaVencHora" />
+
+    <div class="etapa-card recibido" id="tarjetaRecibido">
+        <div class="etapa-header">
+            <span>📦</span>
+            <div class="etapa-titulos">
+                <span class="etapa-titulo">Recibido</span>
+                <span class="etapa-vida-util" id="vidaUtilRecibido"></span>
+            </div>
         </div>
+        <div id="recibidoSection"></div>
     </div>
+
+    <div class="etapa-card preparado" id="tarjetaPreparado">
+        <div class="etapa-header">
+            <span>🍳</span>
+            <div class="etapa-titulos">
+                <span class="etapa-titulo">Preparado</span>
+                <span class="etapa-vida-util" id="vidaUtilPreparado"></span>
+            </div>
+            <button type="button" class="btn-ahora" id="btnAhoraPreparado" onclick="llenarAhora('preparadoFecha','preparadoHora')">⏱️ Ahora</button>
+        </div>
+        <div id="preparadoContenido">
+            <div class="etapa-fila">
+                <div>
+                    <label for="preparadoFecha">Fecha de inicio</label>
+                    <input type="date" id="preparadoFecha" onchange="actualizarLineaTiempo()" />
+                </div>
+                <div>
+                    <label for="preparadoHora">Hora de inicio</label>
+                    <input type="time" id="preparadoHora" onchange="actualizarLineaTiempo()" />
+                </div>
+            </div>
+            <div id="preparadoManualVencInput" class="manual-input">
+                <div class="etapa-fila">
+                    <div>
+                        <label for="preparadoVencFecha">Vencimiento (según empaque)</label>
+                        <input type="date" id="preparadoVencFecha" />
+                    </div>
+                    <div>
+                        <label for="preparadoVencHora">Hora de vencimiento</label>
+                        <input type="time" id="preparadoVencHora" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="etapa-noaplica" id="preparadoNoAplica" style="display:none;">No aplica a este insumo.</div>
+    </div>
+
+    <div class="etapa-card linea" id="tarjetaLinea">
+        <div class="etapa-header">
+            <span>🏭</span>
+            <div class="etapa-titulos">
+                <span class="etapa-titulo">Línea</span>
+                <span class="etapa-vida-util" id="vidaUtilLinea"></span>
+            </div>
+            <button type="button" class="btn-ahora" id="btnAhoraLinea" onclick="llenarAhora('lineaFecha','lineaHora')">⏱️ Ahora</button>
+            <span class="etapa-nota" id="lineaNota" style="display:none;">Completa Preparado primero</span>
+        </div>
+        <div id="lineaContenido">
+            <div class="etapa-fila">
+                <div>
+                    <label for="lineaFecha">Fecha de inicio</label>
+                    <input type="date" id="lineaFecha" onchange="actualizarLineaTiempo()" />
+                </div>
+                <div>
+                    <label for="lineaHora">Hora de inicio</label>
+                    <input type="time" id="lineaHora" onchange="actualizarLineaTiempo()" />
+                </div>
+            </div>
+            <div id="lineaManualVencInput" class="manual-input">
+                <div class="etapa-fila">
+                    <div>
+                        <label for="lineaVencFecha">Vencimiento (según empaque)</label>
+                        <input type="date" id="lineaVencFecha" />
+                    </div>
+                    <div>
+                        <label for="lineaVencHora">Hora de vencimiento</label>
+                        <input type="time" id="lineaVencHora" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="etapa-noaplica" id="lineaNoAplica" style="display:none;">No aplica a este insumo.</div>
+    </div>
+
     <div class="btn-group">
         <button onclick="calcularVencimientos()">✅ Generar Sticker</button>
         <button class="btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar</button>
@@ -632,7 +915,7 @@ const vidaUtil = {
     "Tocino": { recibido: 30, preparado: 7, linea: 2 },
     "Pepperoni de cerdo": { recibido: 30, preparado: 7, linea: 2 },
     "Jamón - local": { recibido: 14, preparado: 7, linea: 2 },
-    "Queso Mozzarella": { recibido: 14, preparado: 7, linea: 1 },
+    "Queso Mozzarella": { recibido: 14, preparado: 7, linea: 1, preparadoDesdeDiaCero: true },
     "Queso en tiras": { recibido: 14, preparado: 7, linea: 1 },
     "Mezcla de 3 quesos (Asiago, Fontina, Provolone)": { recibido: 7, preparado: 7, linea: 1 },
     "Mezcla de 2 quesos (Romano y Parmesano)": { recibido: 7, preparado: 7, linea: 1 },
@@ -684,6 +967,142 @@ const vidaUtil = {
     "Rollitos de Manjar": { recibido: null, preparado: "6 horas", linea: "6 horas" },
     "Rollitos de Canela": { recibido: null, preparado: "6 horas", linea: "6 horas" }
 };
+// ===== COMBOBOX DE BÚSQUEDA DE PRODUCTOS =====
+// Lee las opciones/optgroups del <select id="producto"> oculto, que sigue
+// siendo alimentado por el panel de administración (Firebase/localStorage).
+function leerProductosAgrupados() {
+    const select = document.getElementById('producto');
+    const grupos = [];
+    select.querySelectorAll('optgroup').forEach(og => {
+        const items = Array.from(og.querySelectorAll('option')).map(o => o.value).filter(Boolean);
+        if (items.length) grupos.push({ categoria: og.label, items });
+    });
+    const sueltas = Array.from(select.querySelectorAll(':scope > option'))
+        .map(o => o.value).filter(Boolean);
+    if (sueltas.length) grupos.push({ categoria: '🧂 OTROS', items: sueltas });
+    return grupos;
+}
+
+function normalizarTexto(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function resaltarCoincidencia(texto, query) {
+    if (!query) return texto;
+    const idx = normalizarTexto(texto).indexOf(normalizarTexto(query));
+    if (idx === -1) return texto;
+    return texto.slice(0, idx) + '<mark>' + texto.slice(idx, idx + query.length) + '</mark>' + texto.slice(idx + query.length);
+}
+
+let comboboxIndexActivo = -1;
+
+function renderizarDropdownProductos(query = '') {
+    const dropdown = document.getElementById('productoDropdown');
+    const grupos = leerProductosAgrupados();
+    const q = query.trim();
+    let html = '';
+    let totalItems = 0;
+    grupos.forEach(g => {
+        const items = g.items.filter(nombre => !q || normalizarTexto(nombre).includes(normalizarTexto(q)));
+        if (!items.length) return;
+        html += `<div class="dropdown-categoria">${g.categoria}</div>`;
+        items.forEach(nombre => {
+            totalItems++;
+            const valorEsc = nombre.replace(/"/g, '&quot;');
+            html += `<div class="dropdown-item" data-valor="${valorEsc}" onclick="seleccionarProducto(this.dataset.valor)">${resaltarCoincidencia(nombre, q)}</div>`;
+        });
+    });
+    if (totalItems === 0) {
+        html = `<div class="dropdown-vacio">😕 No se encontró ningún insumo${q ? ` para "${q}"` : ''}.</div>`;
+    }
+    dropdown.innerHTML = html;
+    comboboxIndexActivo = -1;
+}
+
+function abrirDropdownProductos() {
+    renderizarDropdownProductos(document.getElementById('productoInput').value);
+    document.getElementById('productoDropdown').classList.add('abierto');
+}
+
+function cerrarDropdownProductos() {
+    document.getElementById('productoDropdown').classList.remove('abierto');
+    comboboxIndexActivo = -1;
+}
+
+function seleccionarProducto(nombre) {
+    document.getElementById('producto').value = nombre;
+    document.getElementById('productoInput').value = nombre;
+    document.getElementById('comboboxClear').style.display = 'flex';
+    cerrarDropdownProductos();
+    updateShelfLife();
+}
+
+function limpiarProducto(enfocar = true) {
+    document.getElementById('producto').value = '';
+    document.getElementById('productoInput').value = '';
+    document.getElementById('comboboxClear').style.display = 'none';
+    updateShelfLife();
+    if (enfocar) {
+        document.getElementById('productoInput').focus();
+        abrirDropdownProductos();
+    }
+}
+
+function actualizarItemActivo(items) {
+    items.forEach((it, i) => it.classList.toggle('activo', i === comboboxIndexActivo));
+    if (comboboxIndexActivo >= 0 && items[comboboxIndexActivo]) {
+        items[comboboxIndexActivo].scrollIntoView({ block: 'nearest' });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('productoInput');
+    const clearBtn = document.getElementById('comboboxClear');
+    const wrapper = document.getElementById('comboboxWrapper');
+
+    input.addEventListener('input', () => {
+        // Si el usuario escribe algo distinto al valor ya seleccionado, se deselecciona
+        if (input.value !== document.getElementById('producto').value) {
+            document.getElementById('producto').value = '';
+        }
+        clearBtn.style.display = input.value ? 'flex' : 'none';
+        abrirDropdownProductos();
+    });
+    input.addEventListener('focus', abrirDropdownProductos);
+    input.addEventListener('keydown', (e) => {
+        const dropdown = document.getElementById('productoDropdown');
+        if (!dropdown.classList.contains('abierto')) return;
+        const items = dropdown.querySelectorAll('.dropdown-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (items.length) {
+                comboboxIndexActivo = Math.min(comboboxIndexActivo + 1, items.length - 1);
+                actualizarItemActivo(items);
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (items.length) {
+                comboboxIndexActivo = Math.max(comboboxIndexActivo - 1, 0);
+                actualizarItemActivo(items);
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (comboboxIndexActivo >= 0 && items[comboboxIndexActivo]) {
+                items[comboboxIndexActivo].click();
+            } else if (items.length === 1) {
+                items[0].click();
+            }
+        } else if (e.key === 'Escape') {
+            cerrarDropdownProductos();
+            input.blur();
+        }
+    });
+    clearBtn.addEventListener('click', () => limpiarProducto(true));
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) cerrarDropdownProductos();
+    });
+});
+
 const horariosCierre = {
     1: "23:59", 2: "23:59", 3: "23:59",
     4: "23:59", 5: "23:59", 6: "23:59", 0: "23:59"
@@ -693,27 +1112,190 @@ function updateShelfLife() {
     const recibidoSection = document.getElementById('recibidoSection');
     const p = document.getElementById('preparadoManualVencInput');
     const l = document.getElementById('lineaManualVencInput');
+    const tarjetaRecibido = document.getElementById('tarjetaRecibido');
+    const tarjetaPreparado = document.getElementById('tarjetaPreparado');
+    const tarjetaLinea = document.getElementById('tarjetaLinea');
+    const preparadoContenido = document.getElementById('preparadoContenido');
+    const preparadoNoAplica = document.getElementById('preparadoNoAplica');
+    const lineaContenido = document.getElementById('lineaContenido');
+    const lineaNoAplica = document.getElementById('lineaNoAplica');
+    const btnAhoraPreparado = document.getElementById('btnAhoraPreparado');
+    const btnAhoraLinea = document.getElementById('btnAhoraLinea');
+
     if (!producto) {
         recibidoSection.innerHTML = '';
         p.style.display = 'none';
         l.style.display = 'none';
+        tarjetaRecibido.classList.remove('tenue');
+        tarjetaPreparado.classList.remove('tenue');
+        tarjetaLinea.classList.remove('tenue');
+        preparadoContenido.style.display = 'block';
+        preparadoNoAplica.style.display = 'none';
+        lineaContenido.style.display = 'block';
+        lineaNoAplica.style.display = 'none';
+        btnAhoraPreparado.style.display = 'inline-flex';
+        btnAhoraLinea.style.display = 'inline-flex';
+        document.getElementById('lineaNota').style.display = 'none';
+        document.getElementById('vidaUtilRecibido').textContent = '';
+        document.getElementById('vidaUtilPreparado').textContent = '';
+        document.getElementById('vidaUtilLinea').textContent = '';
+        reiniciarLineaTiempo();
         return;
     }
     const s = vidaUtil[producto];
-    if (s.recibido === "Según empaque") {
+    document.getElementById('vidaUtilRecibido').textContent = formatoVidaUtil(s.recibido);
+    document.getElementById('vidaUtilPreparado').textContent = formatoVidaUtil(s.preparado, s.preparadoDesdeDiaCero);
+    document.getElementById('vidaUtilLinea').textContent = formatoVidaUtil(s.linea);
+
+    // === RECIBIDO ===
+    if (s.recibido === null) {
+        recibidoSection.innerHTML = `<div class="etapa-noaplica">No aplica a este insumo.</div>`;
+        tarjetaRecibido.classList.add('tenue');
+    } else if (s.recibido === "Según empaque") {
         recibidoSection.innerHTML = `
-            <label>📦 RECIBIDO - Fecha de Vencimiento (Según empaque):</label>
-            <input type="date" id="recibidoVencFecha" />
+            <label for="recibidoVencFecha">Fecha de vencimiento (según empaque)</label>
+            <input type="date" id="recibidoVencFecha" onchange="actualizarLineaTiempo()" />
             <p class="optional-label">* No se requiere fecha de inicio.</p>
         `;
+        tarjetaRecibido.classList.remove('tenue');
     } else {
         recibidoSection.innerHTML = `
-            <label for="recibidoFecha">📦 RECIBIDO - Fecha de Inicio:</label>
-            <input type="date" id="recibidoFecha" />
+            <div class="etapa-fila">
+                <div>
+                    <label for="recibidoFecha">Fecha de inicio</label>
+                    <input type="date" id="recibidoFecha" onchange="actualizarLineaTiempo()" />
+                </div>
+                <div>
+                    <button type="button" class="btn-ahora" style="margin-top:19px;width:100%;" onclick="llenarAhora('recibidoFecha', null)">⏱️ Ahora</button>
+                </div>
+            </div>
         `;
+        tarjetaRecibido.classList.remove('tenue');
+    }
+
+    // === PREPARADO ===
+    if (s.preparado === null) {
+        preparadoContenido.style.display = 'none';
+        preparadoNoAplica.style.display = 'block';
+        tarjetaPreparado.classList.add('tenue');
+        btnAhoraPreparado.style.display = 'none';
+    } else {
+        preparadoContenido.style.display = 'block';
+        preparadoNoAplica.style.display = 'none';
+        tarjetaPreparado.classList.remove('tenue');
+        btnAhoraPreparado.style.display = 'inline-flex';
     }
     p.style.display = (s.preparado === "Según empaque") ? 'block' : 'none';
+
+    // === LÍNEA ===
+    if (s.linea === null) {
+        lineaContenido.style.display = 'none';
+        lineaNoAplica.style.display = 'block';
+        btnAhoraLinea.style.display = 'none';
+        document.getElementById('lineaNota').style.display = 'none';
+    } else {
+        lineaContenido.style.display = 'block';
+        lineaNoAplica.style.display = 'none';
+        btnAhoraLinea.style.display = 'inline-flex';
+    }
     l.style.display = (s.linea === "Según empaque") ? 'block' : 'none';
+
+    actualizarLineaTiempo();
+}
+
+// ===== BOTÓN "AHORA" Y LÍNEA DE TIEMPO DE PROGRESO =====
+function llenarAhora(fechaId, horaId) {
+    const ahora = new Date();
+    const y = ahora.getFullYear();
+    const m = String(ahora.getMonth() + 1).padStart(2, '0');
+    const d = String(ahora.getDate()).padStart(2, '0');
+    const hh = String(ahora.getHours()).padStart(2, '0');
+    const mm = String(ahora.getMinutes()).padStart(2, '0');
+    const fechaEl = document.getElementById(fechaId);
+    if (fechaEl) fechaEl.value = `${y}-${m}-${d}`;
+    if (horaId) {
+        const horaEl = document.getElementById(horaId);
+        if (horaEl) horaEl.value = `${hh}:${mm}`;
+    }
+    actualizarLineaTiempo();
+}
+
+function reiniciarLineaTiempo() {
+    ['circRecibido', 'circPreparado', 'circLinea'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('completo', 'activo');
+    });
+    ['labelRecibido', 'labelPreparado', 'labelLinea'].forEach(id => {
+        document.getElementById(id).classList.remove('activo-label');
+    });
+    ['lineaTiempoRP', 'lineaTiempoPL'].forEach(id => {
+        document.getElementById(id).classList.remove('completo');
+    });
+}
+
+function actualizarLineaTiempo() {
+    reiniciarLineaTiempo();
+    const producto = document.getElementById('producto').value;
+    if (!producto) return;
+    const s = vidaUtil[producto];
+
+    const recibidoAplica = s.recibido !== null;
+    const preparadoAplica = s.preparado !== null;
+    const lineaAplica = s.linea !== null;
+
+    const recibidoLlenado = recibidoAplica && (
+        document.getElementById('recibidoFecha')?.value ||
+        document.getElementById('recibidoVencFecha')?.value
+    );
+    const preparadoLlenado = preparadoAplica && (
+        document.getElementById('preparadoFecha')?.value && document.getElementById('preparadoHora')?.value
+    );
+    const lineaLlenado = lineaAplica && (
+        document.getElementById('lineaFecha')?.value && document.getElementById('lineaHora')?.value
+    );
+
+    const doneRecibido = !recibidoAplica || !!recibidoLlenado;
+    const donePreparado = !preparadoAplica || !!preparadoLlenado;
+    const doneLinea = !lineaAplica || !!lineaLlenado;
+
+    marcarPaso('circRecibido', 'labelRecibido', doneRecibido, true);
+    marcarPaso('circPreparado', 'labelPreparado', donePreparado, doneRecibido);
+    marcarPaso('circLinea', 'labelLinea', doneLinea, donePreparado);
+
+    if (doneRecibido) document.getElementById('lineaTiempoRP').classList.add('completo');
+    if (donePreparado) document.getElementById('lineaTiempoPL').classList.add('completo');
+
+    // Atenuar visualmente la tarjeta LÍNEA hasta que PREPARADO esté completo (si aplica)
+    const tarjetaLinea = document.getElementById('tarjetaLinea');
+    const lineaNota = document.getElementById('lineaNota');
+    if (lineaAplica && preparadoAplica && !donePreparado) {
+        tarjetaLinea.classList.add('tenue');
+        lineaNota.style.display = 'inline';
+    } else {
+        tarjetaLinea.classList.remove('tenue');
+        lineaNota.style.display = 'none';
+    }
+}
+
+function marcarPaso(circId, labelId, completo, habilitado) {
+    const circ = document.getElementById(circId);
+    const label = document.getElementById(labelId);
+    if (completo) {
+        circ.classList.add('completo');
+    } else if (habilitado) {
+        circ.classList.add('activo');
+        label.classList.add('activo-label');
+    }
+}
+function formatoVidaUtil(valor, desdeDiaCero) {
+    if (valor === null) return 'No aplica';
+    if (valor === "Según empaque") return 'Vida útil: según empaque';
+    if (valor === "11:59 p. m.") return 'Vence: hasta el cierre (11:59 pm)';
+    if (typeof valor === 'string' && valor.includes('horas')) return `Vida útil: ${valor.replace('horas', 'hora(s)')}`;
+    if (typeof valor === 'number') {
+        return `Vida útil: ${valor} día(s)` + (desdeDiaCero ? ' (desde día 0)' : '');
+    }
+    return String(valor);
 }
 function formatearFecha(fechaStr) {
     if (!fechaStr) return "-";
@@ -865,7 +1447,11 @@ function calcularVencimientos() {
                 resumen.push(`<strong>PREPARADO:</strong> Según empaque → No ingresado`);
             }
         } else if (typeof shelfLife.preparado === 'number') {
-            const resultadoNatural = sumarDiasYHorasISO(pF, pH, shelfLife.preparado, 0);
+            // Si el insumo cuenta "desde el día 0" (igual que RECIBIDO), se resta 1 día
+            // para que el día de inicio de PREPARADO cuente como Día 1.
+            const diasAContar = shelfLife.preparadoDesdeDiaCero ? shelfLife.preparado - 1 : shelfLife.preparado;
+            const etiquetaDias = shelfLife.preparadoDesdeDiaCero ? `${shelfLife.preparado} día(s) (desde día 0)` : `${shelfLife.preparado} día(s)`;
+            const resultadoNatural = sumarDiasYHorasISO(pF, pH, diasAContar, 0);
             if (fechaVencRecibidoISO && resultadoNatural.fechaISO > fechaVencRecibidoISO) {
                 const resultado = obtenerUltimoMinutoDia(fechaVencRecibidoISO);
                 vencPreparadoOriginal = { fecha: resultado.fechaISO, hora: resultado.horaISO };
@@ -876,7 +1462,7 @@ function calcularVencimientos() {
                 vencPreparadoOriginal = { fecha: resultadoNatural.fechaISO, hora: resultadoNatural.horaISO };
                 fechaVencPreparadoMostrar = resultadoNatural.fechaMostrar;
                 horaVencPreparadoMostrar = resultadoNatural.horaMostrar;
-                resumen.push(`<strong>PREPARADO:</strong> ${shelfLife.preparado} día(s) → ${resultadoNatural.fechaMostrar} ${resultadoNatural.horaMostrar}`);
+                resumen.push(`<strong>PREPARADO:</strong> ${etiquetaDias} → ${resultadoNatural.fechaMostrar} ${resultadoNatural.horaMostrar}`);
             }
         } else if (shelfLife.preparado === "11:59 p. m.") {
             const resultado = obtenerUltimoMinutoDia(pF);
@@ -1226,7 +1812,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function limpiarFormulario() {
-    document.getElementById('producto').value = "";
+    limpiarProducto(false);
     document.getElementById('recibidoSection').innerHTML = '';
     document.getElementById('preparadoFecha').value = "";
     document.getElementById('preparadoHora').value = "";
@@ -1241,7 +1827,7 @@ function limpiarFormulario() {
     document.getElementById('preparadoManualVencInput').style.display = 'none';
     document.getElementById('lineaManualVencInput').style.display = 'none';
     document.getElementById('ajusteAviso').style.display = 'none';
-    document.getElementById('producto').focus();
+    document.getElementById('productoInput').focus();
 }
 </script>
 </body>
