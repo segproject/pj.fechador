@@ -8,6 +8,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDLX2QPBXTBAppEphnWY1i8CF1dF1G1-4c",
@@ -21,6 +22,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  const auth = getAuth(app);
 
   // Exponer funciones Firebase al scope global
   window._fbSet = (path, data) => set(ref(db, path), data);
@@ -29,25 +31,40 @@
 
   let _fbConectado = false;
 
-  // Escuchar cambios en tiempo real de insumos personalizados
-  window._fbOnValue('insumosPersonalizados', (snapshot) => {
-    _fbConectado = true;
-    const data = snapshot.val() || {};
-    // Limpiar insumos custom previos del objeto vidaUtil
-    const guardadosLocal = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
-    for (const k of Object.keys(guardadosLocal)) delete vidaUtil[k];
-    // Aplicar los de Firebase
-    Object.assign(vidaUtil, data);
-    // Guardar también en localStorage como caché offline
-    localStorage.setItem('insumosPersonalizados', JSON.stringify(data));
-    // Reconstruir categorías desde Firebase
-    window._fbOnValue('insumosCategorias', (snapCat) => {
-      const cats = snapCat.val() || {};
-      localStorage.setItem('insumosCategorias', JSON.stringify(cats));
-      renderizarInsumosEnSelect();
-      renderizarListaAdmin();
-      actualizarIndicadorSync(true);
+  function iniciarEscuchaFirebase() {
+    // Escuchar cambios en tiempo real de insumos personalizados
+    window._fbOnValue('insumosPersonalizados', (snapshot) => {
+      _fbConectado = true;
+      const data = snapshot.val() || {};
+      // Limpiar insumos custom previos del objeto vidaUtil
+      const guardadosLocal = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
+      for (const k of Object.keys(guardadosLocal)) delete vidaUtil[k];
+      // Aplicar los de Firebase
+      Object.assign(vidaUtil, data);
+      // Guardar también en localStorage como caché offline
+      localStorage.setItem('insumosPersonalizados', JSON.stringify(data));
+      // Reconstruir categorías desde Firebase
+      window._fbOnValue('insumosCategorias', (snapCat) => {
+        const cats = snapCat.val() || {};
+        localStorage.setItem('insumosCategorias', JSON.stringify(cats));
+        renderizarInsumosEnSelect();
+        renderizarListaAdmin();
+        actualizarIndicadorSync(true);
+      });
     });
+  }
+
+  // FIX: las reglas de la base de datos exigen "auth != null", pero la app nunca
+  // iniciaba sesión con nadie -> todo era rechazado (permission-denied) siempre.
+  // Se inicia sesión anónima automáticamente (sin pedirle nada al usuario) para
+  // cumplir esa regla, y solo se empieza a escuchar Firebase una vez autenticado.
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      iniciarEscuchaFirebase();
+    }
+  });
+  signInAnonymously(auth).catch((err) => {
+    console.error('Error de autenticación anónima con Firebase:', err);
   });
 
   // FIX: si Firebase no responde en 6 segundos, dejar de esperar y avisar
