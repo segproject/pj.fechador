@@ -27,8 +27,11 @@
   window._fbRemove = (path) => remove(ref(db, path));
   window._fbOnValue = (path, callback) => onValue(ref(db, path), callback);
 
+  let _fbConectado = false;
+
   // Escuchar cambios en tiempo real de insumos personalizados
   window._fbOnValue('insumosPersonalizados', (snapshot) => {
+    _fbConectado = true;
     const data = snapshot.val() || {};
     // Limpiar insumos custom previos del objeto vidaUtil
     const guardadosLocal = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
@@ -46,6 +49,14 @@
       actualizarIndicadorSync(true);
     });
   });
+
+  // FIX: si Firebase no responde en 6 segundos, dejar de esperar y avisar
+  // que se está trabajando sin conexión (en vez de quedarse en "Conectando..." para siempre).
+  setTimeout(() => {
+    if (!_fbConectado) {
+      actualizarIndicadorSync(false);
+    }
+  }, 6000);
 
   document.addEventListener('DOMContentLoaded', () => {
     actualizarIndicadorSync(null); // "conectando..."
@@ -1635,6 +1646,16 @@ function actualizarIndicadorSync(ok) {
     }
 }
 
+// FIX: helper para que cualquier promesa de Firebase no se quede esperando para siempre.
+// Si no responde dentro del tiempo dado, se rechaza y el código pasa al bloque catch
+// (que guarda localmente), en vez de quedarse colgado en el "await".
+function conTimeout(promesa, ms = 5000) {
+    return Promise.race([
+        promesa,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado con Firebase')), ms))
+    ]);
+}
+
 // Al iniciar: cargar caché local mientras llega Firebase
 function cargarInsumosPersonalizados() {
     const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
@@ -1741,14 +1762,17 @@ async function agregarInsumo() {
 
     const nuevoInsumo = { recibido, preparado, linea };
 
-    // Guardar en Firebase (se propaga en tiempo real a todos los dispositivos)
+    // FIX: envolvemos las llamadas a Firebase con conTimeout() — si no responde en 5s,
+    // se rechaza la promesa y el catch guarda localmente de inmediato, en vez de
+    // quedarse "colgado" esperando una respuesta que tal vez nunca llegue (por ejemplo,
+    // si Brave Shields, un firewall o la red está bloqueando la conexión a Firebase).
     try {
-        await window._fbSet(`insumosPersonalizados/${nombre}`, nuevoInsumo);
-        await window._fbSet(`insumosCategorias/${nombre}`, categoria);
+        await conTimeout(window._fbSet(`insumosPersonalizados/${nombre}`, nuevoInsumo));
+        await conTimeout(window._fbSet(`insumosCategorias/${nombre}`, categoria));
         limpiarFormAdmin();
         mostrarMsg('exito', `✅ "${nombre}" guardado y sincronizado.`);
     } catch (e) {
-        // Fallback a localStorage si no hay conexión
+        // Fallback a localStorage si no hay conexión (o si Firebase no respondió a tiempo)
         vidaUtil[nombre] = nuevoInsumo;
         const guardados = JSON.parse(localStorage.getItem('insumosPersonalizados') || '{}');
         guardados[nombre] = nuevoInsumo;
@@ -1767,8 +1791,8 @@ async function agregarInsumo() {
 async function eliminarInsumo(nombre) {
     if (!confirm(`¿Eliminar el insumo "${nombre}"?`)) return;
     try {
-        await window._fbRemove(`insumosPersonalizados/${nombre}`);
-        await window._fbRemove(`insumosCategorias/${nombre}`);
+        await conTimeout(window._fbRemove(`insumosPersonalizados/${nombre}`));
+        await conTimeout(window._fbRemove(`insumosCategorias/${nombre}`));
     } catch (e) {
         // Fallback local
         delete vidaUtil[nombre];
